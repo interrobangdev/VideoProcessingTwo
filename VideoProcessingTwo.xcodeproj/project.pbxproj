@@ -11,6 +11,25 @@
 		8C3C46E42BCF1C1C004EA17E /* VideoProcessingTwo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3C46D92BCF1C1C004EA17E /* VideoProcessingTwo.framework */; };
 		8C3C46E92BCF1C1C004EA17E /* VideoProcessingTwoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C46E82BCF1C1C004EA17E /* VideoProcessingTwoTests.swift */; };
 		8C3C46EA2BCF1C1C004EA17E /* VideoProcessingTwo.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C3C46DC2BCF1C1C004EA17E /* VideoProcessingTwo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8C3C477A2BCF1D4B004EA17E /* Composition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C476B2BCF1D4B004EA17E /* Composition.swift */; };
+		8C3C477B2BCF1D4B004EA17E /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C476C2BCF1D4B004EA17E /* Filter.swift */; };
+		8C3C477C2BCF1D4B004EA17E /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C476D2BCF1D4B004EA17E /* Frame.swift */; };
+		8C3C477D2BCF1D4B004EA17E /* FrameCompositor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C476E2BCF1D4B004EA17E /* FrameCompositor.swift */; };
+		8C3C477E2BCF1D4B004EA17E /* GIFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C476F2BCF1D4B004EA17E /* GIFImage.swift */; };
+		8C3C477F2BCF1D4B004EA17E /* GIFImageSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47702BCF1D4B004EA17E /* GIFImageSource.swift */; };
+		8C3C47802BCF1D4B004EA17E /* GIFWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47712BCF1D4B004EA17E /* GIFWriter.swift */; };
+		8C3C47812BCF1D4B004EA17E /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47722BCF1D4B004EA17E /* Group.swift */; };
+		8C3C47822BCF1D4B004EA17E /* ImageSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47732BCF1D4B004EA17E /* ImageSource.swift */; };
+		8C3C47832BCF1D4B004EA17E /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47742BCF1D4B004EA17E /* Layer.swift */; };
+		8C3C47842BCF1D4B004EA17E /* MetalEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47752BCF1D4B004EA17E /* MetalEnvironment.swift */; };
+		8C3C47852BCF1D4B004EA17E /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47762BCF1D4B004EA17E /* Scene.swift */; };
+		8C3C47862BCF1D4B004EA17E /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47772BCF1D4B004EA17E /* Source.swift */; };
+		8C3C47872BCF1D4B004EA17E /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47782BCF1D4B004EA17E /* Surface.swift */; };
+		8C3C478E2BCF1D58004EA17E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47882BCF1D58004EA17E /* CGExtensions.swift */; };
+		8C3C478F2BCF1D58004EA17E /* CGImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47892BCF1D58004EA17E /* CGImage+Extensions.swift */; };
+		8C3C47902BCF1D58004EA17E /* CIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C478A2BCF1D58004EA17E /* CIImage+Extensions.swift */; };
+		8C3C47912BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C478B2BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift */; };
+		8C3C47922BCF1D58004EA17E /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C478C2BCF1D58004EA17E /* Double+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +48,25 @@
 		8C3C46DD2BCF1C1C004EA17E /* VideoProcessingTwo.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = VideoProcessingTwo.docc; sourceTree = "<group>"; };
 		8C3C46E32BCF1C1C004EA17E /* VideoProcessingTwoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VideoProcessingTwoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C3C46E82BCF1C1C004EA17E /* VideoProcessingTwoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoProcessingTwoTests.swift; sourceTree = "<group>"; };
+		8C3C476B2BCF1D4B004EA17E /* Composition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Composition.swift; sourceTree = "<group>"; };
+		8C3C476C2BCF1D4B004EA17E /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		8C3C476D2BCF1D4B004EA17E /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
+		8C3C476E2BCF1D4B004EA17E /* FrameCompositor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameCompositor.swift; sourceTree = "<group>"; };
+		8C3C476F2BCF1D4B004EA17E /* GIFImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GIFImage.swift; sourceTree = "<group>"; };
+		8C3C47702BCF1D4B004EA17E /* GIFImageSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GIFImageSource.swift; sourceTree = "<group>"; };
+		8C3C47712BCF1D4B004EA17E /* GIFWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GIFWriter.swift; sourceTree = "<group>"; };
+		8C3C47722BCF1D4B004EA17E /* Group.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		8C3C47732BCF1D4B004EA17E /* ImageSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSource.swift; sourceTree = "<group>"; };
+		8C3C47742BCF1D4B004EA17E /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
+		8C3C47752BCF1D4B004EA17E /* MetalEnvironment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetalEnvironment.swift; sourceTree = "<group>"; };
+		8C3C47762BCF1D4B004EA17E /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
+		8C3C47772BCF1D4B004EA17E /* Source.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
+		8C3C47782BCF1D4B004EA17E /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Surface.swift; sourceTree = "<group>"; };
+		8C3C47882BCF1D58004EA17E /* CGExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
+		8C3C47892BCF1D58004EA17E /* CGImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+Extensions.swift"; sourceTree = "<group>"; };
+		8C3C478A2BCF1D58004EA17E /* CIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CIImage+Extensions.swift"; sourceTree = "<group>"; };
+		8C3C478B2BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+Extensions.swift"; sourceTree = "<group>"; };
+		8C3C478C2BCF1D58004EA17E /* Double+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +109,8 @@
 		8C3C46DB2BCF1C1C004EA17E /* VideoProcessingTwo */ = {
 			isa = PBXGroup;
 			children = (
+				8C3C478D2BCF1D58004EA17E /* Extensions */,
+				8C3C47792BCF1D4B004EA17E /* Source */,
 				8C3C46DC2BCF1C1C004EA17E /* VideoProcessingTwo.h */,
 				8C3C46DD2BCF1C1C004EA17E /* VideoProcessingTwo.docc */,
 			);
@@ -83,6 +123,40 @@
 				8C3C46E82BCF1C1C004EA17E /* VideoProcessingTwoTests.swift */,
 			);
 			path = VideoProcessingTwoTests;
+			sourceTree = "<group>";
+		};
+		8C3C47792BCF1D4B004EA17E /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				8C3C476B2BCF1D4B004EA17E /* Composition.swift */,
+				8C3C476C2BCF1D4B004EA17E /* Filter.swift */,
+				8C3C476D2BCF1D4B004EA17E /* Frame.swift */,
+				8C3C476E2BCF1D4B004EA17E /* FrameCompositor.swift */,
+				8C3C476F2BCF1D4B004EA17E /* GIFImage.swift */,
+				8C3C47702BCF1D4B004EA17E /* GIFImageSource.swift */,
+				8C3C47712BCF1D4B004EA17E /* GIFWriter.swift */,
+				8C3C47722BCF1D4B004EA17E /* Group.swift */,
+				8C3C47732BCF1D4B004EA17E /* ImageSource.swift */,
+				8C3C47742BCF1D4B004EA17E /* Layer.swift */,
+				8C3C47752BCF1D4B004EA17E /* MetalEnvironment.swift */,
+				8C3C47762BCF1D4B004EA17E /* Scene.swift */,
+				8C3C47772BCF1D4B004EA17E /* Source.swift */,
+				8C3C47782BCF1D4B004EA17E /* Surface.swift */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		8C3C478D2BCF1D58004EA17E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8C3C47882BCF1D58004EA17E /* CGExtensions.swift */,
+				8C3C47892BCF1D58004EA17E /* CGImage+Extensions.swift */,
+				8C3C478A2BCF1D58004EA17E /* CIImage+Extensions.swift */,
+				8C3C478B2BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift */,
+				8C3C478C2BCF1D58004EA17E /* Double+Extensions.swift */,
+			);
+			name = Extensions;
+			path = ../../VideoProcessingTwoContainer/VideoProcessingTwoContainer/Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,7 +268,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C3C47812BCF1D4B004EA17E /* Group.swift in Sources */,
+				8C3C477E2BCF1D4B004EA17E /* GIFImage.swift in Sources */,
+				8C3C477A2BCF1D4B004EA17E /* Composition.swift in Sources */,
+				8C3C47902BCF1D58004EA17E /* CIImage+Extensions.swift in Sources */,
+				8C3C47922BCF1D58004EA17E /* Double+Extensions.swift in Sources */,
+				8C3C47832BCF1D4B004EA17E /* Layer.swift in Sources */,
+				8C3C47872BCF1D4B004EA17E /* Surface.swift in Sources */,
+				8C3C47852BCF1D4B004EA17E /* Scene.swift in Sources */,
+				8C3C477C2BCF1D4B004EA17E /* Frame.swift in Sources */,
+				8C3C478E2BCF1D58004EA17E /* CGExtensions.swift in Sources */,
+				8C3C477D2BCF1D4B004EA17E /* FrameCompositor.swift in Sources */,
+				8C3C47912BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift in Sources */,
+				8C3C477B2BCF1D4B004EA17E /* Filter.swift in Sources */,
+				8C3C47822BCF1D4B004EA17E /* ImageSource.swift in Sources */,
+				8C3C47802BCF1D4B004EA17E /* GIFWriter.swift in Sources */,
+				8C3C478F2BCF1D58004EA17E /* CGImage+Extensions.swift in Sources */,
+				8C3C47862BCF1D4B004EA17E /* Source.swift in Sources */,
+				8C3C47842BCF1D4B004EA17E /* MetalEnvironment.swift in Sources */,
 				8C3C46DE2BCF1C1C004EA17E /* VideoProcessingTwo.docc in Sources */,
+				8C3C477F2BCF1D4B004EA17E /* GIFImageSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,6 +504,7 @@
 		8C3C46F12BCF1C1C004EA17E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2KPALSNS6E;
@@ -427,6 +521,7 @@
 		8C3C46F22BCF1C1C004EA17E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2KPALSNS6E;
