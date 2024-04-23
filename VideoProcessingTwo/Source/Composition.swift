@@ -12,8 +12,14 @@ public protocol Transition {
 }
 
 public struct Composition {
+    public enum OutputType {
+        case gif
+        case video
+    }
     let id = UUID().uuidString
     let scenes: [Scene]
     let transitions: [Transition]
     let size: CGSize
+    
+    let outputType: OutputType
 }
