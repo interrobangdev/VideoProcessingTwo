@@ -25,14 +25,14 @@
 		8C3C47852BCF1D4B004EA17E /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47762BCF1D4B004EA17E /* Scene.swift */; };
 		8C3C47862BCF1D4B004EA17E /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47772BCF1D4B004EA17E /* Source.swift */; };
 		8C3C47872BCF1D4B004EA17E /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47782BCF1D4B004EA17E /* Surface.swift */; };
-		8C3C478E2BCF1D58004EA17E /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47882BCF1D58004EA17E /* CGExtensions.swift */; };
-		8C3C478F2BCF1D58004EA17E /* CGImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C47892BCF1D58004EA17E /* CGImage+Extensions.swift */; };
-		8C3C47902BCF1D58004EA17E /* CIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C478A2BCF1D58004EA17E /* CIImage+Extensions.swift */; };
-		8C3C47912BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C478B2BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift */; };
-		8C3C47922BCF1D58004EA17E /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C3C478C2BCF1D58004EA17E /* Double+Extensions.swift */; };
 		8CF1A3782BD609F90035FA73 /* MovieWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3772BD609F90035FA73 /* MovieWriter.swift */; };
 		8CF1A37A2BD60A0A0035FA73 /* MovieReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3792BD60A0A0035FA73 /* MovieReader.swift */; };
 		8CF1A37C2BD72D000035FA73 /* VideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A37B2BD72D000035FA73 /* VideoSource.swift */; };
+		8CF1A3872BD838150035FA73 /* CGExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3812BD838150035FA73 /* CGExtensions.swift */; };
+		8CF1A3882BD838150035FA73 /* CGImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3822BD838150035FA73 /* CGImage+Extensions.swift */; };
+		8CF1A3892BD838150035FA73 /* CIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3832BD838150035FA73 /* CIImage+Extensions.swift */; };
+		8CF1A38A2BD838150035FA73 /* CVPixelBuffer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3842BD838150035FA73 /* CVPixelBuffer+Extensions.swift */; };
+		8CF1A38B2BD838150035FA73 /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CF1A3852BD838150035FA73 /* Double+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,14 +65,14 @@
 		8C3C47762BCF1D4B004EA17E /* Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		8C3C47772BCF1D4B004EA17E /* Source.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		8C3C47782BCF1D4B004EA17E /* Surface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Surface.swift; sourceTree = "<group>"; };
-		8C3C47882BCF1D58004EA17E /* CGExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
-		8C3C47892BCF1D58004EA17E /* CGImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+Extensions.swift"; sourceTree = "<group>"; };
-		8C3C478A2BCF1D58004EA17E /* CIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CIImage+Extensions.swift"; sourceTree = "<group>"; };
-		8C3C478B2BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+Extensions.swift"; sourceTree = "<group>"; };
-		8C3C478C2BCF1D58004EA17E /* Double+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		8CF1A3772BD609F90035FA73 /* MovieWriter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieWriter.swift; sourceTree = "<group>"; };
 		8CF1A3792BD60A0A0035FA73 /* MovieReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieReader.swift; sourceTree = "<group>"; };
 		8CF1A37B2BD72D000035FA73 /* VideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSource.swift; sourceTree = "<group>"; };
+		8CF1A3812BD838150035FA73 /* CGExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGExtensions.swift; sourceTree = "<group>"; };
+		8CF1A3822BD838150035FA73 /* CGImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+Extensions.swift"; sourceTree = "<group>"; };
+		8CF1A3832BD838150035FA73 /* CIImage+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CIImage+Extensions.swift"; sourceTree = "<group>"; };
+		8CF1A3842BD838150035FA73 /* CVPixelBuffer+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CVPixelBuffer+Extensions.swift"; sourceTree = "<group>"; };
+		8CF1A3852BD838150035FA73 /* Double+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,7 +115,7 @@
 		8C3C46DB2BCF1C1C004EA17E /* VideoProcessingTwo */ = {
 			isa = PBXGroup;
 			children = (
-				8C3C478D2BCF1D58004EA17E /* Extensions */,
+				8CF1A3862BD838150035FA73 /* Extensions */,
 				8C3C47792BCF1D4B004EA17E /* Source */,
 				8C3C46DC2BCF1C1C004EA17E /* VideoProcessingTwo.h */,
 				8C3C46DD2BCF1C1C004EA17E /* VideoProcessingTwo.docc */,
@@ -155,17 +155,16 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		8C3C478D2BCF1D58004EA17E /* Extensions */ = {
+		8CF1A3862BD838150035FA73 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				8C3C47882BCF1D58004EA17E /* CGExtensions.swift */,
-				8C3C47892BCF1D58004EA17E /* CGImage+Extensions.swift */,
-				8C3C478A2BCF1D58004EA17E /* CIImage+Extensions.swift */,
-				8C3C478B2BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift */,
-				8C3C478C2BCF1D58004EA17E /* Double+Extensions.swift */,
+				8CF1A3812BD838150035FA73 /* CGExtensions.swift */,
+				8CF1A3822BD838150035FA73 /* CGImage+Extensions.swift */,
+				8CF1A3832BD838150035FA73 /* CIImage+Extensions.swift */,
+				8CF1A3842BD838150035FA73 /* CVPixelBuffer+Extensions.swift */,
+				8CF1A3852BD838150035FA73 /* Double+Extensions.swift */,
 			);
-			name = Extensions;
-			path = ../../VideoProcessingTwoContainer/VideoProcessingTwoContainer/Extensions;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,26 +279,26 @@
 				8C3C47812BCF1D4B004EA17E /* Group.swift in Sources */,
 				8C3C477E2BCF1D4B004EA17E /* GIFImage.swift in Sources */,
 				8C3C477A2BCF1D4B004EA17E /* Composition.swift in Sources */,
-				8C3C47902BCF1D58004EA17E /* CIImage+Extensions.swift in Sources */,
-				8C3C47922BCF1D58004EA17E /* Double+Extensions.swift in Sources */,
 				8C3C47832BCF1D4B004EA17E /* Layer.swift in Sources */,
 				8C3C47872BCF1D4B004EA17E /* Surface.swift in Sources */,
 				8C3C47852BCF1D4B004EA17E /* Scene.swift in Sources */,
 				8C3C477C2BCF1D4B004EA17E /* Frame.swift in Sources */,
-				8C3C478E2BCF1D58004EA17E /* CGExtensions.swift in Sources */,
 				8C3C477D2BCF1D4B004EA17E /* FrameCompositor.swift in Sources */,
-				8C3C47912BCF1D58004EA17E /* CVPixelBuffer+Extensions.swift in Sources */,
 				8C3C477B2BCF1D4B004EA17E /* Filter.swift in Sources */,
 				8C3C47822BCF1D4B004EA17E /* ImageSource.swift in Sources */,
 				8C3C47802BCF1D4B004EA17E /* GIFWriter.swift in Sources */,
 				8CF1A37A2BD60A0A0035FA73 /* MovieReader.swift in Sources */,
-				8C3C478F2BCF1D58004EA17E /* CGImage+Extensions.swift in Sources */,
+				8CF1A3892BD838150035FA73 /* CIImage+Extensions.swift in Sources */,
 				8C3C47862BCF1D4B004EA17E /* Source.swift in Sources */,
 				8C3C47842BCF1D4B004EA17E /* MetalEnvironment.swift in Sources */,
 				8C3C46DE2BCF1C1C004EA17E /* VideoProcessingTwo.docc in Sources */,
 				8CF1A3782BD609F90035FA73 /* MovieWriter.swift in Sources */,
+				8CF1A3872BD838150035FA73 /* CGExtensions.swift in Sources */,
 				8CF1A37C2BD72D000035FA73 /* VideoSource.swift in Sources */,
+				8CF1A38A2BD838150035FA73 /* CVPixelBuffer+Extensions.swift in Sources */,
+				8CF1A38B2BD838150035FA73 /* Double+Extensions.swift in Sources */,
 				8C3C477F2BCF1D4B004EA17E /* GIFImageSource.swift in Sources */,
+				8CF1A3882BD838150035FA73 /* CGImage+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
