@@ -9,7 +9,7 @@ import Foundation
 import CoreImage
 import CoreMedia
 
-public struct Layer {
+public class Layer {
     let id = UUID().uuidString
     var surfaces: [Surface]
     

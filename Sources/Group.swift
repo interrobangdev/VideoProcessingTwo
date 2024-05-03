@@ -13,7 +13,7 @@ public protocol Mask {
     func maskImage(image: CIImage) -> CIImage?
 }
 
-public struct Group {
+public class Group {
     var id: String = UUID().uuidString
     var groups: [Group]
     var layers: [Layer]
@@ -26,6 +26,11 @@ public struct Group {
         self.layers = layers
         self.filters = filters
         self.mask = mask
+    }
+    
+    static func emptyGroup() -> Group {
+        let layer = Layer(surfaces: [])
+        return Group(groups: [], layers: [layer], filters: [], mask: nil)
     }
     
     func renderGroup(frameTime: Double, compositionTimeOffset: Double) -> CIImage? {

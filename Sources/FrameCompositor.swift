@@ -40,7 +40,7 @@ public class FrameCompositor {
 
         generateFrames(scene: scene, compositionTimeOffset: 0.0, realTime: false, frameCallback: { [weak self] (image, frameTime) in
 
-            if var pixelBuffer = self?.videoWriter?.getPixelBuffer() {
+            if let pixelBuffer = self?.videoWriter?.getPixelBuffer() {
                 MetalEnvironment.shared.context.render(image, to: pixelBuffer)
                 
                 self?.videoWriter?.appendFrame(pixelBuffer: pixelBuffer, time: frameTime.cmTime())

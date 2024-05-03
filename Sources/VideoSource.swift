@@ -35,7 +35,7 @@ public class VideoSource: Source {
     }
     
     public func getFrameAtTime(cmTime: CMTime) -> (any Frame)? {
-        var loopedTime = cmTime.seconds.remainder(dividingBy: reader?.duration ?? 1.0).cmTime()
+        let loopedTime = cmTime.seconds.remainder(dividingBy: reader?.duration ?? 1.0).cmTime()
         guard let lf = lastFrame,
               let cf = currentFrame else { return nil }
         if loopedTime >= lf.time && loopedTime < cf.time {

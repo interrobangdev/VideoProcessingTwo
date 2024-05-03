@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Surface {
+public class Surface {
     let id = UUID().uuidString
     let source: Source
     let frame: CGRect
