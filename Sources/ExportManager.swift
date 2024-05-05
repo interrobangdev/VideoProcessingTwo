@@ -24,6 +24,11 @@ public class ExportManager {
     
     public static let shared = ExportManager()
     
+    public init(scenesToExport: [ExportModel] = [ExportModel](), currentlyExporting: Bool = false) {
+        self.scenesToExport = scenesToExport
+        self.currentlyExporting = currentlyExporting
+    }
+    
     public func exportScene(scene: Scene, outpuURL: URL, progress: SceneExportProgress?, completion: @escaping SceneExportCompletion) {
         
         let model = ExportModel(outputURL: outpuURL, scene: scene, completion: completion, progress: progress)

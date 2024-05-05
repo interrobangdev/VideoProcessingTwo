@@ -7,16 +7,20 @@
 
 import AVFoundation
 
-struct CompositionPlayerInfo {
-    let composition: AVComposition
-    let videoComposition: AVVideoComposition
-    let audioMix: AVAudioMix?
+public struct CompositionPlayerInfo {
+    public let composition: AVComposition
+    public let videoComposition: AVVideoComposition
+    public let audioMix: AVAudioMix?
 }
 
-class CompositionHelper {
+public class CompositionHelper {
     var exportSession: AVAssetExportSession?
     
-    class func makeComposition(composition: Composition, containingFolder: String) -> CompositionPlayerInfo {
+    public init(exportSession: AVAssetExportSession? = nil) {
+        self.exportSession = exportSession
+    }
+    
+    public class func makeComposition(composition: Composition, containingFolder: String) -> CompositionPlayerInfo {
         let comp = AVMutableComposition()
         
         let trackOne = comp.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid)
@@ -35,9 +39,9 @@ class CompositionHelper {
             
             if let videoTrack = scene.asset?.tracks(withMediaType: .video).first {
                 
-                let timeRange = CMTimeRange(start: startTime.cmTime(), end: (startTime + scene.duration).cmTime())
+                let timeRange = CMTimeRange(start: .zero, end:  scene.duration.cmTime())
                 do {
-                    try mutableTrack?.insertTimeRange(timeRange, of: videoTrack, at: .zero)
+                    try mutableTrack?.insertTimeRange(timeRange, of: videoTrack, at: startTime.cmTime())
                 } catch let e {
                     print("Error inserting track \(e)")
                 }
@@ -46,13 +50,13 @@ class CompositionHelper {
             }
         }
         
-        var videoComposition = AVMutableVideoComposition(propertiesOf: comp)
+        let videoComposition = AVMutableVideoComposition(propertiesOf: comp)
         videoComposition.renderSize = composition.renderSize
         
         return CompositionPlayerInfo(composition: comp, videoComposition: videoComposition, audioMix: nil)
     }
     
-    func exportComposition(outputURL: URL, compositionPlayerInfo: CompositionPlayerInfo, completion: @escaping (URL?, Error?) -> ()) {
+    public func exportComposition(outputURL: URL, compositionPlayerInfo: CompositionPlayerInfo, completion: @escaping (URL?, Error?) -> ()) {
         
         exportSession = AVAssetExportSession(asset: compositionPlayerInfo.composition, presetName: AVAssetExportPresetHighestQuality)
         

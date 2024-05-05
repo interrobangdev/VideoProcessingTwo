@@ -22,20 +22,17 @@ public struct Transition {
     }
 }
 
-public struct LayerObjectIndex {
-    public let groupIndices: [Int]
-    public let layerIndex: Int
-}
+
 
 public class Scene {
-    let id = UUID().uuidString
-    var duration: Double
-    var frameRate: Double
+    public let id = UUID().uuidString
+    public var duration: Double
+    public var frameRate: Double
     
     let group: Group
     var transition: Transition
     
-    var asset: AVURLAsset?
+    public var asset: AVURLAsset?
     
     public enum AssetType: String {
         case image
@@ -43,10 +40,10 @@ public class Scene {
         case gif
     }
     
-    public init(id: String = UUID().uuidString, duration: Double, frameRate: Double, group: Group, transition: Transition? = nil) {
+    public init(id: String = UUID().uuidString, duration: Double, frameRate: Double, transition: Transition? = nil) {
         self.duration = duration
         self.frameRate = frameRate
-        self.group = group
+        self.group = Group(groups: [], layers: [], filters: [], mask: nil)
         self.transition = transition ?? Transition(type: .none, duration: 0.0)
     }
     

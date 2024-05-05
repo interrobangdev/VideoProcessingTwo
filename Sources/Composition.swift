@@ -15,9 +15,15 @@ public struct Composition {
         case video
     }
     
-    let id = UUID().uuidString
-    let scenes: [Scene]
-    let renderSize: CGSize
+    public let id = UUID().uuidString
+    public let scenes: [Scene]
+    public let renderSize: CGSize
     
-    let outputType: OutputType
+    public let outputType: OutputType
+    
+    public init(scenes: [Scene], renderSize: CGSize, outputType: OutputType) {
+        self.scenes = scenes
+        self.renderSize = renderSize
+        self.outputType = outputType
+    }
 }
