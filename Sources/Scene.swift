@@ -58,7 +58,7 @@ public class Scene {
         return AVURLAsset(url: url)
     }
     
-    public func getGroupLayer(layerIndex: LayerObjectIndex, create: Bool) -> Layer? {
+    public func getGroup(layerIndex: LayerObjectIndex, create: Bool) -> Group? {
         var group = self.group
         for groupIndex in layerIndex.groupIndices {
             if group.groups.count > groupIndex {
@@ -76,6 +76,12 @@ public class Scene {
                 }
             }
         }
+        
+        return group
+    }
+    
+    public func getGroupLayer(layerIndex: LayerObjectIndex, create: Bool) -> Layer? {
+        guard let group = getGroup(layerIndex: layerIndex, create: create) else { return nil }
         
         if group.layers.count > layerIndex.layerIndex {
             return group.layers[layerIndex.layerIndex]

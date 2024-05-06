@@ -15,10 +15,10 @@ public protocol Mask {
 
 public class Group {
     var id: String = UUID().uuidString
-    var groups: [Group]
-    var layers: [Layer]
-    var filters: [Filter]
-    var mask: Mask?
+    public var groups: [Group]
+    public var layers: [Layer]
+    public var filters: [Filter]
+    public var mask: Mask?
     
     public init(id: String = UUID().uuidString, groups: [Group], layers: [Layer], filters: [Filter], mask: Mask?) {
         self.id = id
@@ -36,9 +36,9 @@ public class Group {
     func renderGroup(frameTime: Double, compositionTimeOffset: Double) -> CIImage? {
         var outputImage: CIImage?
 
-        if groups.count > 0 {
-            for group in groups {
-                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
+        if layers.count > 0 {
+            for layer in layers {
+                if let outImage = layer.renderLayer(frameTime: frameTime) {
                     if let oi = outputImage {
                         outputImage = outImage.composited(over: oi)
                     } else {
@@ -48,9 +48,9 @@ public class Group {
             }
         }
         
-        if layers.count > 0 {
-            for layer in layers {
-                if let outImage = layer.renderLayer(frameTime: frameTime) {
+        if groups.count > 0 {
+            for group in groups {
+                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
                     if let oi = outputImage {
                         outputImage = outImage.composited(over: oi)
                     } else {

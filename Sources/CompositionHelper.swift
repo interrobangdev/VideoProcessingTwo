@@ -8,6 +8,7 @@
 import AVFoundation
 
 public struct CompositionPlayerInfo {
+    public let id: String
     public let composition: AVComposition
     public let videoComposition: AVVideoComposition
     public let audioMix: AVAudioMix?
@@ -15,6 +16,7 @@ public struct CompositionPlayerInfo {
 
 public class CompositionHelper {
     var exportSession: AVAssetExportSession?
+    var exportSessionTimer: Timer?
     
     public init(exportSession: AVAssetExportSession? = nil) {
         self.exportSession = exportSession
@@ -53,10 +55,10 @@ public class CompositionHelper {
         let videoComposition = AVMutableVideoComposition(propertiesOf: comp)
         videoComposition.renderSize = composition.renderSize
         
-        return CompositionPlayerInfo(composition: comp, videoComposition: videoComposition, audioMix: nil)
+        return CompositionPlayerInfo(id: composition.id, composition: comp, videoComposition: videoComposition, audioMix: nil)
     }
     
-    public func exportComposition(outputURL: URL, compositionPlayerInfo: CompositionPlayerInfo, completion: @escaping (URL?, Error?) -> ()) {
+    public func exportComposition(outputURL: URL, compositionPlayerInfo: CompositionPlayerInfo, progress: ((String, Double) -> ())?, completion: @escaping (URL?, Error?) -> ()) {
         
         exportSession = AVAssetExportSession(asset: compositionPlayerInfo.composition, presetName: AVAssetExportPresetHighestQuality)
         
@@ -65,6 +67,25 @@ public class CompositionHelper {
         
         exportSession?.outputFileType = .mp4
         exportSession?.outputURL = outputURL
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            self?.exportSessionTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { [weak self] (timer) in
+
+                guard let progressVal = self?.exportSession?.progress else {
+                    timer.invalidate()
+                    self?.exportSessionTimer = nil
+                    
+                    return
+                }
+                
+                progress?(compositionPlayerInfo.id, Double(progressVal))
+                
+                if progressVal > 0.97 {
+                    timer.invalidate()
+                    self?.exportSessionTimer = nil
+                }
+            })
+        }
         
         exportSession?.exportAsynchronously { [weak self] in
             if let error = self?.exportSession?.error {
