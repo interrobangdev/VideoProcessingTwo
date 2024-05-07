@@ -53,7 +53,7 @@ public class GIFImage {
         var currentTime = 0.0
         var index = -1
         
-        for i in 1..<gifDelays.count {
+        for i in 0..<gifDelays.count {
             let gifTime = gifDelays[i]
             
             if time.seconds >= currentTime &&
