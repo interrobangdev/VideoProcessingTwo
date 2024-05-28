@@ -29,7 +29,7 @@ public class Scene {
     public var duration: Double
     public var frameRate: Double
     
-    let group: Group
+    public let group: Group
     var transition: Transition
     
     public var asset: AVURLAsset?

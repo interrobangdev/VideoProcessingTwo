@@ -10,15 +10,25 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 
 public class GaussianBlur: Filter {
-    let blur = CIFilter.gaussianBlur()
-    public var filterConfig: FilterConfig
-    public var radius: Float
+    public var filterAnimators: [FilterAnimator]
     
-    public init(radius: Float, filterConfig: FilterConfig) {
-        self.radius = radius
-        self.filterConfig = filterConfig
+    let blur = CIFilter.gaussianBlur()
+
+    public var radius: Double {
+        set(value) {
+            blur.radius = Float(value)
+        }
+        get {
+            return Double(blur.radius)
+        }
     }
     
+    public init(radius: Double, filterAnimators: [FilterAnimator]) {
+        self.filterAnimators = filterAnimators
+        self.radius = radius
+    }
+    
+    /*
     public func configureFilter() {
         for option in filterConfig.configOptions {
             if option.configType == .coreImage {
@@ -27,11 +37,17 @@ public class GaussianBlur: Filter {
                 }
             }
         }
+    }*/
+    
+    public func updateFilterValue(filterProperty: FilterProperty, value: Any) {
+        if filterProperty == .radius,
+            let val = value as? Double {
+            self.radius = val
+        }
     }
     
     public func filterContent(image: CIImage, sourceTime: CMTime?, sceneTime: CMTime?, compositionTime: CMTime?) -> CIImage? {
         
-        configureFilter()
         blur.inputImage = image
         
         return blur.outputImage

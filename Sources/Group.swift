@@ -62,6 +62,10 @@ public class Group {
         
         for filter in filters {
             if let oi = outputImage {
+                for animator in filter.filterAnimators {
+                    let tweenedValue = animator.tweenValue(time: frameTime)
+                    filter.updateFilterValue(filterProperty: animator.animationProperty, value: tweenedValue)
+                }
                 outputImage = filter.filterContent(image: oi, sourceTime: nil, sceneTime: frameTime.cmTime(), compositionTime: (frameTime + compositionTimeOffset).cmTime())
             }
         }
