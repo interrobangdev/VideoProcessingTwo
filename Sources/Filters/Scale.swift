@@ -33,7 +33,6 @@ public class Scale: Filter {
     }
     
     public func filterContent(image: CIImage, sourceTime: CMTime?, sceneTime: CMTime?, compositionTime: CMTime?) -> CIImage? {
-        let inputExtent = image.extent
         
         let translation = CGAffineTransform(translationX: -centerPoint.x, y: -centerPoint.y)
         let scaleTranslate = translation.concatenating(CGAffineTransform(scaleX: CGFloat(scale), y: CGFloat(scale)))
