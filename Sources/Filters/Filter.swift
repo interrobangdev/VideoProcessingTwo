@@ -16,6 +16,10 @@ public enum FilterProperty: String {
     case translation
     case centerPoint
     case fade
+    case brightness
+    case contrast
+    case saturation
+    case intensity
 }
 
 public protocol Filter {

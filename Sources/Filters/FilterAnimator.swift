@@ -15,12 +15,11 @@ public class LinearFunction: TweenFunctionProvider {
     }
 }
 
-
-
 public class FilterAnimator {
     public enum AnimationValueType {
         case SingleValue
         case Point
+        case Rect
     }
     
     var id: String = UUID().uuidString
@@ -30,17 +29,21 @@ public class FilterAnimator {
     var endValue: Double?
     var startPoint: CGPoint?
     var endPoint: CGPoint?
+    var startRect: CGRect?
+    var endRect: CGRect?
     var startTime: Double
     var endTime: Double
     var tweenFunctionProvider: TweenFunctionProvider
     
-    public init(id: String = UUID().uuidString, type: AnimationValueType, animationProperty: FilterProperty, startValue: Double? = nil, endValue: Double? = nil, startPoint: CGPoint? = nil, endPoint: CGPoint? = nil, startTime: Double, endTime: Double, tweenFunctionProvider: TweenFunctionProvider) {
+    public init(id: String = UUID().uuidString, type: AnimationValueType, animationProperty: FilterProperty, startValue: Double? = nil, endValue: Double? = nil, startPoint: CGPoint? = nil, endPoint: CGPoint? = nil, startRect: CGRect? = nil, endRect: CGRect? = nil, startTime: Double, endTime: Double, tweenFunctionProvider: TweenFunctionProvider) {
         self.id = id
         self.type = type
         self.startValue = startValue
         self.endValue = endValue
         self.startPoint = startPoint
         self.endPoint = endPoint
+        self.startRect = startRect
+        self.endRect = endRect
         self.startTime = startTime
         self.endTime = endTime
         self.tweenFunctionProvider = tweenFunctionProvider
@@ -60,6 +63,13 @@ public class FilterAnimator {
             guard let sv = startValue,
                   let ev = endValue else { return percentComplete }
             return ((ev - sv) * percentComplete) + sv
+        } else if type == .Rect {
+            guard let sr = startRect,
+                  let er = endRect else { return CGRect.zero }
+            let origin = ((er.origin - sr.origin) * percentComplete) + sr.origin
+            let size = ((er.size - sr.size) * percentComplete) + sr.size
+                          
+            return CGRect(origin: origin, size: size)
         } else {
 //        else if type == .Point {
             guard let sp = startPoint,

@@ -67,7 +67,7 @@ class VideoFrame: Frame {
     }
     
     func cvPixelRepresentation() -> CVPixelBuffer? {
-        return nil
+        return pixelBuffer
     }
     
     func ciImageRepresentation() -> CIImage? {
