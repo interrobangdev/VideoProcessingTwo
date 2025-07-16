@@ -14,7 +14,7 @@ class GlitchFilter: CIFilter {
         let data = try! Data(contentsOf: url)
         
         kernel = try? CIColorKernel(functionName: "glitchEffect",
-                                   fromMetalLibrary: data)
+                                    fromMetalLibraryData: data)
     }
 
     required init?(coder aDecoder: NSCoder) {

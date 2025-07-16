@@ -15,10 +15,23 @@ public class VideoSource: Source {
     var reader: MovieReader?
     let url: URL
     
+    public var naturalSize: CGSize {
+        return currentFrame?.size ?? CGSize(width: 1920, height: 1080)
+    }
+    
+    public var duration: Double {
+        return reader?.duration ?? 0.0
+    }
+    
     public init(movieFileUrl: URL) {
         url = movieFileUrl
         
         setupReader(movieFileURL: movieFileUrl)
+    }
+    
+    public init(url: URL) {
+        self.url = url
+        setupReader(movieFileURL: url)
     }
     
     func setupReader(movieFileURL: URL) {

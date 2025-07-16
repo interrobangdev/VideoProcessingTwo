@@ -4,6 +4,7 @@
 //  Created by Jake Gundersen on 4/2/21.
 //
 
+#if os(ios)
 import UIKit
 import MetalKit
 
@@ -141,3 +142,4 @@ extension MetalViewController: MTKViewDelegate {
         return cropped
     }
 }
+#endif

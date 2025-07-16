@@ -6,7 +6,7 @@
 //  Copyright © 2019 Knxn. All rights reserved.
 //
 
-import UIKit
+import CoreImage
 import AVFoundation
 
 public protocol CameraManagerDelegate: NSObjectProtocol {
@@ -19,7 +19,9 @@ public class CameraManager : NSObject {
     private var videoDevice: AVCaptureDevice?
 
     private let videoDataOutput = AVCaptureVideoDataOutput()
+    #if os(iOS)
     private let photoCaptureOutput = AVCapturePhotoOutput()
+    #endif
     
     var videoInput: AVCaptureDeviceInput?
 
@@ -28,8 +30,11 @@ public class CameraManager : NSObject {
     public var outputFrame: Frame?
     public weak var delegate: CameraManagerDelegate?
 
+    #if os(iOS)
     public var devicePosition: AVCaptureDevice.Position = .back
+    #endif
 
+    #if os(iOS)
     public var exposureBias: Float? {
         get {
             return videoDevice?.exposureTargetBias
@@ -75,7 +80,9 @@ public class CameraManager : NSObject {
             return zoom
         }
     }
+    #endif
 
+    #if os(iOS)
     public var flashMode: AVCaptureDevice.FlashMode = .off
     public var torchMode: AVCaptureDevice.TorchMode = .off
     
@@ -86,9 +93,14 @@ public class CameraManager : NSObject {
         
         return photoSettings
     }
+    #endif
     
     public func setup() {
+        #if os(iOS)
         videoDevice = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: devicePosition).devices.first
+        #elseif os(macOS)
+        videoDevice = AVCaptureDevice.default(for: .video)
+        #endif
 
         guard let d = videoDevice else { return }
         captureSession.beginConfiguration()
@@ -114,9 +126,11 @@ public class CameraManager : NSObject {
             captureSession.addOutput(videoDataOutput)
         }
 
+        #if os(iOS)
         if captureSession.canAddOutput(photoCaptureOutput) {
             captureSession.addOutput(photoCaptureOutput)
         }
+        #endif
         
         captureSession.commitConfiguration()
     }
@@ -129,13 +143,16 @@ public class CameraManager : NSObject {
         captureSession.stopRunning()
     }
 
+    #if os(iOS)
     func swapCamera(position: AVCaptureDevice.Position) {
         if devicePosition == position { return }
         devicePosition = position
 
         setup()
     }
+    #endif
 
+    #if os(iOS)
     func isFlashAvailable() -> Bool {
         if let device = videoDevice {
             return device.isFlashAvailable
@@ -183,6 +200,7 @@ public class CameraManager : NSObject {
             }
         }
     }
+    #endif
 
     func setLockExposureAndFocus(point: CGPoint) {
         //point here is a normalized value between (0, 0) and (1, 1) where
@@ -231,7 +249,9 @@ public class CameraManager : NSObject {
 
                 if vd.isExposureModeSupported(.continuousAutoExposure) {
                     vd.exposureMode = .continuousAutoExposure
+                    #if os(iOS)
                     vd.setExposureTargetBias(0.0, completionHandler: nil)
+                    #endif
                 } else {
                     print("Exposure mode .continuousAutoExposure not supported on this camera")
                 }
@@ -261,6 +281,7 @@ public class CameraManager : NSObject {
         }
     }
 
+    #if os(iOS)
     func setExposureBias(bias: Float) {
         let min = minTargetBias
         let max = maxTargetBias
@@ -302,11 +323,14 @@ public class CameraManager : NSObject {
             }
         }
     }
+    #endif
     
+    #if os(iOS)
     public func takePhoto() {
         let photoSets = photoSettings()
         photoCaptureOutput.capturePhoto(with: photoSets, delegate: self)
     }
+    #endif
 }
 
 extension CameraManager : AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -327,6 +351,7 @@ extension CameraManager : AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
+#if os(iOS)
 extension CameraManager : AVCapturePhotoCaptureDelegate {
     public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let cgImg = photo.cgImageRepresentation() {
@@ -335,3 +360,4 @@ extension CameraManager : AVCapturePhotoCaptureDelegate {
         }
     }
 }
+#endif

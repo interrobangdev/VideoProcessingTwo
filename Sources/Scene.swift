@@ -5,8 +5,13 @@
 //  Created by Jake Gundersen on 4/3/24.
 //
 
-import UIKit
 import AVFoundation
+
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 public struct Transition {
     public enum TransitionType {
@@ -112,8 +117,8 @@ public class Scene {
                 
             }
         } else if type == .image {
-            if let image = UIImage(contentsOfFile: assetURL.path),
-                  let cgImage = image.cgImage {
+            if let image = PlatformImage(contentsOfFile: assetURL.path),
+                  let cgImage = image.cgImageRepresentation {
                       source = ImageSource(image: cgImage)
                   }
         } else if type == .video {

@@ -5,7 +5,7 @@
 //  Created by Jake Gundersen on 4/6/24.
 //
 
-import UIKit
+//import UIKit
 import CoreMedia
 
 enum GifParseError: Error {

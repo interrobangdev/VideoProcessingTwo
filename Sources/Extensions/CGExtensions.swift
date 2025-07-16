@@ -6,7 +6,11 @@
 //
 
 import CoreGraphics
+#if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 extension CGPoint {
     func distance(otherPoint: CGPoint) -> CGFloat {
@@ -139,20 +143,34 @@ extension CGAffineTransform {
     }
 }
 
+#if canImport(UIKit)
+import UIKit
+
 extension CGImagePropertyOrientation {
     init(_ uiOrientation: UIImage.Orientation) {
         switch uiOrientation {
-            case .up: self = .up
-            case .upMirrored: self = .upMirrored
-            case .down: self = .down
-            case .downMirrored: self = .downMirrored
-            case .left: self = .left
-            case .leftMirrored: self = .leftMirrored
-            case .right: self = .right
-            case .rightMirrored: self = .rightMirrored
+        case .up: self = .up
+        case .upMirrored: self = .upMirrored
+        case .down: self = .down
+        case .downMirrored: self = .downMirrored
+        case .left: self = .left
+        case .leftMirrored: self = .leftMirrored
+        case .right: self = .right
+        case .rightMirrored: self = .rightMirrored
         @unknown default:
             self = .up
         }
     }
 }
+#elseif canImport(AppKit)
+import AppKit
+
+// On macOS, there's no native orientation enum to map from.
+// You could default to `.up` or get orientation from EXIF metadata if needed.
+extension CGImagePropertyOrientation {
+    static var defaultMacOrientation: CGImagePropertyOrientation {
+        return .up
+    }
+}
+#endif
 

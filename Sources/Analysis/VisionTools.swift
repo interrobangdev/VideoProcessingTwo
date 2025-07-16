@@ -111,6 +111,7 @@ class VisionTools {
         }
     }
     
+#if os(iOS)
     static func performHumanSegmentation(on frame: Frame) -> VNPixelBufferObservation? {
         if #available(iOS 15.0, *) {
             let request = VNGeneratePersonSegmentationRequest()
@@ -141,6 +142,7 @@ class VisionTools {
             return nil
         }
     }
+#endif
     
     static func performObjectSalienceRequest(on frame: Frame) -> [VNSaliencyImageObservation]? {
         let request = VNGenerateObjectnessBasedSaliencyImageRequest()

@@ -5,7 +5,6 @@
 //  Created by Jake Gundersen on 4/3/24.
 //
 
-import UIKit
 import CoreImage
 import CoreGraphics
 import AVFoundation
@@ -13,14 +12,13 @@ import AVFoundation
 public protocol Frame {
     var time: CMTime { get }
     var size: CGSize { get }
-    //???
     func cvPixelRepresentation() -> CVPixelBuffer?
     func ciImageRepresentation() -> CIImage?
-    func uiImageRepresentation() -> UIImage?
+    func platformImageRepresentation() -> PlatformImage?
 }
 
 class ImageFrame: Frame {
-    let image: UIImage
+    let image: PlatformImage
     
     var time: CMTime {
         return CMTime.indefinite
@@ -29,7 +27,7 @@ class ImageFrame: Frame {
         return image.size
     }
     
-    init(image: UIImage) {
+    init(image: PlatformImage) {
         self.image = image
     }
     
@@ -38,14 +36,14 @@ class ImageFrame: Frame {
     }
     
     func ciImageRepresentation() -> CIImage? {
-        if let cgimg = image.cgImage {
+        if let cgimg = image.cgImageRepresentation {
             return CIImage(cgImage: cgimg)
         }
         
         return nil
     }
     
-    func uiImageRepresentation() -> UIImage? {
+    func platformImageRepresentation() -> PlatformImage? {
         return image
     }
 }
@@ -74,9 +72,9 @@ class VideoFrame: Frame {
         return CIImage(cvPixelBuffer: pixelBuffer)
     }
     
-    func uiImageRepresentation() -> UIImage? {
+    func platformImageRepresentation() -> PlatformImage? {
         if let cgImage = pixelBuffer.cgImage {
-            return UIImage(cgImage: cgImage)
+            return PlatformImage(cgImage: cgImage)
         }
         
         return nil
@@ -107,7 +105,7 @@ class LowImageFrame: Frame {
         return CIImage(cgImage: cgImage)
     }
     
-    func uiImageRepresentation() -> UIImage? {
-        return UIImage(cgImage: cgImage)
+    func platformImageRepresentation() -> PlatformImage? {
+        return PlatformImage(cgImage: cgImage)
     }
 }

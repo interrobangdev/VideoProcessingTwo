@@ -7,6 +7,7 @@ let package = Package(
     name: "VideoProcessingTwo",
     platforms: [
         .iOS(.v15),
+        .macOS(.v11),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
