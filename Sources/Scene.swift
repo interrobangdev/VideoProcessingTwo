@@ -38,6 +38,7 @@ public class Scene {
     var transition: Transition
     
     public var asset: AVURLAsset?
+    public var size: CGSize
     
     public enum AssetType: String {
         case image
@@ -45,11 +46,12 @@ public class Scene {
         case gif
     }
     
-    public init(id: String = UUID().uuidString, duration: Double, frameRate: Double, transition: Transition? = nil) {
+    public init(id: String = UUID().uuidString, duration: Double, frameRate: Double, transition: Transition? = nil, size: CGSize = CGSize(width: 1200, height: 675)) {
         self.duration = duration
         self.frameRate = frameRate
         self.group = Group(groups: [], layers: [], filters: [], mask: nil)
         self.transition = transition ?? Transition(type: .none, duration: 0.0)
+        self.size = size
     }
     
     public func makeSceneFilename() -> String {

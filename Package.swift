@@ -15,11 +15,20 @@ let package = Package(
             name: "VideoProcessingTwo",
             targets: ["VideoProcessingTwo"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/JuniperPhoton/CIMetalCompilerPlugin", from: "0.11.0")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "VideoProcessingTwo"),
+            name: "VideoProcessingTwo",
+            exclude: [
+                "Shaders/"
+            ],
+            plugins: [
+                .plugin(name: "CIMetalCompilerPlugin", package: "CIMetalCompilerPlugin")
+            ]),
         .testTarget(
             name: "VideoProcessingTwoTests",
             dependencies: ["VideoProcessingTwo"]),

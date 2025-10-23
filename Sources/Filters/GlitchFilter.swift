@@ -1,20 +1,41 @@
 import CoreImage
 import Metal
+import Foundation
 
 class GlitchFilter: CIFilter {
-    private var kernel: CIColorKernel?
-    
+    private static var cachedKernel: CIKernel?
+
+    private var kernel: CIKernel? {
+        if Self.cachedKernel == nil {
+            Self.cachedKernel = Self.createKernel()
+        }
+        return Self.cachedKernel
+    }
+
     var inputImage: CIImage?
     var intensity: Float = 1.0
 
+    private static func createKernel() -> CIKernel? {
+        do {
+            // Load the compiled default.metallib from the bundle
+            guard let url = Bundle.module.url(forResource: "default", withExtension: "metallib") else {
+                return nil
+            }
+
+            guard let data = try? Data(contentsOf: url) else {
+                return nil
+            }
+
+            // Create CIKernel from the compiled Metal library
+            return try CIKernel(functionName: "glitchEffect", fromMetalLibraryData: data)
+
+        } catch {
+            return nil
+        }
+    }
+
     override init() {
         super.init()
-        
-        let url = Bundle.module.url(forResource: "default", withExtension: "metallib")!
-        let data = try! Data(contentsOf: url)
-        
-        kernel = try? CIColorKernel(functionName: "glitchEffect",
-                                    fromMetalLibraryData: data)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -51,8 +72,12 @@ class GlitchFilter: CIFilter {
     }
 
     override var outputImage: CIImage? {
-        guard let inputImage = inputImage, let kernel = kernel else { return nil }
+        guard let inputImage = inputImage, let kernel = kernel else {
+            return inputImage
+        }
+
         return kernel.apply(extent: inputImage.extent,
-                          arguments: [inputImage, intensity])
+                           roiCallback: { _, rect in return rect },
+                           arguments: [inputImage, NSNumber(value: intensity)])
     }
 }

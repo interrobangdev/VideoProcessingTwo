@@ -7,6 +7,8 @@
 
 //import UIKit
 import CoreMedia
+import ImageIO
+import CoreGraphics
 
 enum GifParseError: Error {
     case invalidFilename

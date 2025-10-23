@@ -10,14 +10,15 @@ extern "C" {
         float4 glitchEffect(sampler src, float intensity, destination dest) {
             float2 coord = dest.coord();
             float2 offset = float2(sin(coord.y * 0.1 + intensity * 10.0) * 10.0, 0.0);
-            
-            float4 baseColor = src.sample(coord + offset * intensity);
-            float4 redSample = src.sample(coord + offset * intensity * 1.1);
-            float4 blueSample = src.sample(coord + offset * intensity * 0.9);
+
+            // Use samplerTransform to properly transform coordinates for sampling
+            float4 baseColor = src.sample(src.transform(coord + offset * intensity));
+            float4 redSample = src.sample(src.transform(coord + offset * intensity * 1.1));
+            float4 blueSample = src.sample(src.transform(coord + offset * intensity * 0.9));
 
             baseColor.r = redSample.r;
             baseColor.b = blueSample.b;
-            
+
             return baseColor;
         }
     }

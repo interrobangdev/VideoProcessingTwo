@@ -8,8 +8,8 @@
 import Foundation
 import CoreMedia
 
-extension Double {
-    func cmTime(preferredTimeScale: CMTimeScale = 600) -> CMTime {
+public extension Double {
+    public func cmTime(preferredTimeScale: CMTimeScale = 600) -> CMTime {
         return CMTime(seconds: self, preferredTimescale: preferredTimeScale)
     }
 }

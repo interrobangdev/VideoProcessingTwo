@@ -43,7 +43,6 @@ public class GlitchEffect: Filter {
         colorControls.inputImage = image
         pixellate.inputImage = colorControls.outputImage
         glitchFilter.inputImage = pixellate.outputImage
-        
         return glitchFilter.outputImage
     }
 }
