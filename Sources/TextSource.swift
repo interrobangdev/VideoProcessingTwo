@@ -42,28 +42,38 @@ public class TextSource: Source {
     public var canvasSize: CGSize
     public var wordDuration: Double
     public var animationType: TextAnimationType
+    public var maxCharacters: Int
     
-    public init(words: [String], textStyle: TextStyle = TextStyle(), canvasSize: CGSize, wordDuration: Double = 1.0, animationType: TextAnimationType = .swap) {
+    public init(words: [String], textStyle: TextStyle = TextStyle(), canvasSize: CGSize, wordDuration: Double = 1.0, animationType: TextAnimationType = .swap, maxCharacters: Int = 20) {
         self.words = words
         self.textStyle = textStyle
         self.canvasSize = canvasSize
         self.wordDuration = wordDuration
         self.animationType = animationType
+        self.maxCharacters = maxCharacters
     }
     
     public func getFrameAtTime(cmTime: CMTime) -> Frame? {
         let timeInSeconds = cmTime.seconds
-        let currentWordIndex = Int(timeInSeconds / wordDuration) % words.count
-        let timeInWord = timeInSeconds.truncatingRemainder(dividingBy: wordDuration)
-        let progressInWord = timeInWord / wordDuration
         
-        let currentWord = words[currentWordIndex]
-        let nextWord = words[(currentWordIndex + 1) % words.count]
+        // Create text chunks based on character limit and word boundaries
+        let textChunks = createTextChunks()
+        
+        if textChunks.isEmpty {
+            return nil
+        }
+        
+        let currentChunkIndex = Int(timeInSeconds / wordDuration) % textChunks.count
+        let timeInChunk = timeInSeconds.truncatingRemainder(dividingBy: wordDuration)
+        let progressInChunk = timeInChunk / wordDuration
+        
+        let currentText = textChunks[currentChunkIndex]
+        let nextText = textChunks[(currentChunkIndex + 1) % textChunks.count]
         
         if let textImage = animationType.renderText(
-            currentWord: currentWord,
-            nextWord: nextWord,
-            progress: progressInWord,
+            currentWord: currentText,
+            nextWord: nextText,
+            progress: progressInChunk,
             style: textStyle,
             canvasSize: canvasSize
         ) {
@@ -74,6 +84,36 @@ public class TextSource: Source {
         }
         
         return nil
+    }
+    
+    private func createTextChunks() -> [String] {
+        var chunks: [String] = []
+        var currentChunk = ""
+        
+        for word in words {
+            let testChunk = currentChunk.isEmpty ? word : "\(currentChunk) \(word)"
+            
+            // Check if adding this word would exceed the character limit
+            if testChunk.count <= maxCharacters {
+                currentChunk = testChunk
+            } else {
+                // If current chunk is not empty, save it and start a new one
+                if !currentChunk.isEmpty {
+                    chunks.append(currentChunk)
+                    currentChunk = word
+                } else {
+                    // If a single word exceeds the limit, truncate it
+                    currentChunk = String(word.prefix(maxCharacters))
+                }
+            }
+        }
+        
+        // Add the final chunk if it's not empty
+        if !currentChunk.isEmpty {
+            chunks.append(currentChunk)
+        }
+        
+        return chunks
     }
 }
 
@@ -213,29 +253,33 @@ public enum TextAnimationType {
         let attributedString = NSAttributedString(string: text, attributes: attributes)
         let textSize = attributedString.size()
         
-        // Calculate position based on alignment
+        // Calculate position based on alignment within the canvas
         var drawRect = CGRect(origin: .zero, size: textSize)
         switch style.alignment {
         case .center:
-            drawRect.origin.x = (canvasSize.width - textSize.width) / 2
+            drawRect.origin.x = max(0, (canvasSize.width - textSize.width) / 2)
         case .right:
-            drawRect.origin.x = canvasSize.width - textSize.width
+            drawRect.origin.x = max(0, canvasSize.width - textSize.width)
         default:
             drawRect.origin.x = 0
         }
-        drawRect.origin.y = (canvasSize.height - textSize.height) / 2
+        drawRect.origin.y = max(0, (canvasSize.height - textSize.height) / 2)
+        
+        // Ensure text fits within canvas bounds
+        if drawRect.origin.x + textSize.width > canvasSize.width {
+            drawRect.origin.x = max(0, canvasSize.width - textSize.width)
+        }
+        if drawRect.origin.y + textSize.height > canvasSize.height {
+            drawRect.origin.y = max(0, canvasSize.height - textSize.height)
+        }
         
         // Apply offset
         drawRect.origin.x += offset.x
         drawRect.origin.y += offset.y
         
-        // Flip coordinate system for Core Graphics
-        context.scaleBy(x: 1.0, y: -1.0)
-        context.translateBy(x: 0, y: -canvasSize.height)
-        
-        // Draw text using Core Text
+        // Draw text using Core Text without coordinate flipping
         let line = CTLineCreateWithAttributedString(attributedString)
-        context.textPosition = CGPoint(x: drawRect.origin.x, y: canvasSize.height - drawRect.origin.y - textSize.height)
+        context.textPosition = CGPoint(x: drawRect.origin.x, y: drawRect.origin.y)
         CTLineDraw(line, context)
         
         guard let cgImage = context.makeImage() else { return nil }
