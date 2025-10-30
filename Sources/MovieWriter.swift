@@ -117,8 +117,12 @@ public class MovieWriter: NSObject {
         }
     }
     
-    public func appendFrame(pixelBuffer: CVPixelBuffer, time: CMTime) {
+    public func appendFrame(pixelBuffer: CVPixelBuffer, time: CMTime, completion: (() -> Void)? = nil) {
         writerQueue.async { [weak self] in
+            defer {
+                completion?()
+            }
+
             guard let s = self,
                 let aw = s.assetWriter,
                 let vi = s.assetWriterVideoInput,
@@ -126,27 +130,25 @@ public class MovieWriter: NSObject {
                     print("Failed to get components in appendFrame")
                     return
             }
-            
+
             if !s.writerStarted {
                 print("Starting session at time: \(CMTimeGetSeconds(time))")
                 aw.startSession(atSourceTime: time)
                 s.writerStarted = true
             }
-            
+
             if aw.status == .writing {
-                if vi.isReadyForMoreMediaData {
-                    if !pixelAdapter.append(pixelBuffer, withPresentationTime: time) {
-                        print("Failed to append buffer at time \(CMTimeGetSeconds(time))")
-                        print("Asset writer status: \(aw.status)")
-                        if let error = aw.error {
-                            print("Asset writer error: \(error)")
-                        }
-                        return
-                    } else {
-//                        print("Successfully appended frame at time \(CMTimeGetSeconds(time))")
+                // Wait for writer to be ready
+                while !vi.isReadyForMoreMediaData {
+                    Thread.sleep(forTimeInterval: 0.001) // 1ms wait
+                }
+
+                if !pixelAdapter.append(pixelBuffer, withPresentationTime: time) {
+                    print("Failed to append buffer at time \(CMTimeGetSeconds(time))")
+                    print("Asset writer status: \(aw.status)")
+                    if let error = aw.error {
+                        print("Asset writer error: \(error)")
                     }
-                } else {
-                    print("Video input not ready for more data at time \(CMTimeGetSeconds(time))")
                 }
             } else {
                 print("Asset writer not in writing state: \(aw.status) at time \(CMTimeGetSeconds(time))")

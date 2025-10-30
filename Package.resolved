@@ -1,0 +1,24 @@
+{
+  "originHash" : "6fc2bc0a460315a2d4fe31245a4de7b54cbb2365121fa3b9f0b298bd2f29df33",
+  "pins" : [
+    {
+      "identity" : "cimetalcompilerplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JuniperPhoton/CIMetalCompilerPlugin",
+      "state" : {
+        "revision" : "ee6f37ad138f9623785c7538769899684bf519dc",
+        "version" : "0.14.0"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
+        "version" : "1.6.2"
+      }
+    }
+  ],
+  "version" : 3
+}

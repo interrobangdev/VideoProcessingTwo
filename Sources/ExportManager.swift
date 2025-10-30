@@ -51,13 +51,16 @@ public class ExportManager {
             return
         }
         scenesToExport.removeFirst()
-        
-        compositor.exportScene(scene: model.scene, outputType: .video, outputURL: model.outputURL) { (image, time) in
-            let progress = time / model.scene.duration
-            model.progress?(model.scene.id, progress)
-        } completion: { [weak self] (success) in
-            model.completion(success)
-            self?.exportNextScene()
+
+        // Run export on background thread to avoid blocking UI
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.compositor.exportScene(scene: model.scene, outputType: .video, outputURL: model.outputURL) { (image, time) in
+                let progress = time / model.scene.duration
+                model.progress?(model.scene.id, progress)
+            } completion: { [weak self] (success) in
+                model.completion(success)
+                self?.exportNextScene()
+            }
         }
     }
 }

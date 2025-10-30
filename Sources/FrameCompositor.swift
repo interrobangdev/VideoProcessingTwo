@@ -34,19 +34,22 @@ public class FrameCompositor {
     }
     
     public func exportVideo(scene: Scene, outputURL: URL, frameCallback: FrameCallback, completion: @escaping (Bool) -> ()) {
-        
-        videoWriter = MovieWriter(url: outputURL, size: CGSize(width: 1200, height: 675), transform: .identity)
+
+        videoWriter = MovieWriter(url: outputURL, size: scene.size, transform: .identity)
         videoWriter?.startWriter()
 
         generateFrames(scene: scene, compositionTimeOffset: 0.0, realTime: false, frameCallback: { [weak self] (image, frameTime) in
+            autoreleasepool {
 
-            if let pixelBuffer = self?.videoWriter?.getPixelBuffer() {
-                MetalEnvironment.shared.context.render(image, to: pixelBuffer)
-                
-                self?.videoWriter?.appendFrame(pixelBuffer: pixelBuffer, time: frameTime.cmTime())
+                if let pixelBuffer = self?.videoWriter?.getPixelBuffer() {
+                    MetalEnvironment.shared.context.render(image, to: pixelBuffer)
+
+                    self?.videoWriter?.appendFrame(pixelBuffer: pixelBuffer, time: frameTime.cmTime(), completion: {
+                    })
+                }
+
+                frameCallback(image, frameTime)
             }
-            
-            frameCallback(image, frameTime)
         }, completion: { [weak self] (success) in
             self?.videoWriter?.finishWriting(completion: { success in
                 print("success writing file \(success)")
@@ -78,20 +81,29 @@ public class FrameCompositor {
     
     public func generateFrames(scene: Scene, compositionTimeOffset: Double, realTime: Bool, frameCallback: FrameCallback, completion: CompletionCallback) {
         let frameCount = Int(scene.duration * scene.frameRate)
-        
-//        var startTime = CFAbsoluteTimeGetCurrent()
-        
+
+        let startTime = CFAbsoluteTimeGetCurrent()
+        var renderTime = 0.0
+        var callbackTime = 0.0
+
         for i in 0..<frameCount {
-            let frameTime = Double(i) * (1.0 / scene.frameRate)
-            
-            if let outputImage = scene.group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
-                
-                frameCallback(outputImage, frameTime)
+            autoreleasepool {
+                let frameTime = Double(i) * (1.0 / scene.frameRate)
+
+                let renderStart = CFAbsoluteTimeGetCurrent()
+                if let outputImage = scene.group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
+                    renderTime += CFAbsoluteTimeGetCurrent() - renderStart
+
+                    let callbackStart = CFAbsoluteTimeGetCurrent()
+                    frameCallback(outputImage, frameTime)
+                    callbackTime += CFAbsoluteTimeGetCurrent() - callbackStart
+                }
             }
         }
-        
+
+        let totalTime = CFAbsoluteTimeGetCurrent() - startTime
+        print("Export timing - Total: \(totalTime)s, Render: \(renderTime)s, Callback: \(callbackTime)s, Frames: \(frameCount)")
+
         completion(true)
     }
-    
-    
 }
