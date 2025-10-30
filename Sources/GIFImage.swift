@@ -34,6 +34,7 @@ public class GIFImage {
     var imageSource: CGImageSource?
     var gifDelays: [Float] = []
     var gifDuration: Float = 0.0
+    private var frameCache: [Int: CGImage] = [:]  // Cache decoded frames
     
     public init?(gifData: Data) {
         guard let imgSource = CGImageSourceCreateWithData(gifData as CFData, nil) else { return nil }
@@ -54,24 +55,33 @@ public class GIFImage {
     func getImageAtTime(time: CMTime) -> CGImage? {
         var currentTime = 0.0
         var index = -1
-        
+
         for i in 0..<gifDelays.count {
             let gifTime = gifDelays[i]
-            
+
             if time.seconds >= currentTime &&
                 time.seconds < currentTime + Double(gifTime) {
                 index = i
                 break
             }
-            
+
             currentTime += Double(gifTime)
         }
-        
-        if let source = imageSource,
-            index != -1 {
-            return CGImageSourceCreateImageAtIndex(source, index, nil)
+
+        guard index != -1 else { return nil }
+
+        // Check cache first
+        if let cachedFrame = frameCache[index] {
+            return cachedFrame
         }
-        
+
+        // Decode and cache the frame
+        if let source = imageSource,
+           let frame = CGImageSourceCreateImageAtIndex(source, index, nil) {
+            frameCache[index] = frame
+            return frame
+        }
+
         return nil
     }
     
