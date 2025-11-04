@@ -18,7 +18,7 @@ public class FrameCompositor {
     
     public init() {}
     
-    public func exportScene(scene: Scene, outputType: Composition.OutputType, outputURL: URL, frameCallback: FrameCallback, completion: @escaping (Bool) -> ()) {
+    public func exportScene(scene: VideoScene, outputType: Composition.OutputType, outputURL: URL, frameCallback: FrameCallback, completion: @escaping (Bool) -> ()) {
         if outputType == .gif {
             let frameCount = Int(scene.duration * scene.frameRate)
             
@@ -33,7 +33,7 @@ public class FrameCompositor {
         }
     }
     
-    public func exportVideo(scene: Scene, outputURL: URL, frameCallback: FrameCallback, completion: @escaping (Bool) -> ()) {
+    public func exportVideo(scene: VideoScene, outputURL: URL, frameCallback: FrameCallback, completion: @escaping (Bool) -> ()) {
 
         videoWriter = MovieWriter(url: outputURL, size: scene.size, transform: .identity)
         videoWriter?.startWriter()
@@ -58,7 +58,7 @@ public class FrameCompositor {
         })
     }
     
-    public func exportGIF(scene: Scene, frameCount: Int, outputURL: URL, frameCallback: FrameCallback, completion: (Bool) -> ()) {
+    public func exportGIF(scene: VideoScene, frameCount: Int, outputURL: URL, frameCallback: FrameCallback, completion: (Bool) -> ()) {
         gifWriter = GIFWriter(url: outputURL, frameCount: frameCount)
         
         var previousTime = 0.0
@@ -79,7 +79,7 @@ public class FrameCompositor {
         })
     }
     
-    public func generateFrames(scene: Scene, compositionTimeOffset: Double, realTime: Bool, frameCallback: FrameCallback, completion: CompletionCallback) {
+    public func generateFrames(scene: VideoScene, compositionTimeOffset: Double, realTime: Bool, frameCallback: FrameCallback, completion: CompletionCallback) {
         let frameCount = Int(scene.duration * scene.frameRate)
 
         let startTime = CFAbsoluteTimeGetCurrent()

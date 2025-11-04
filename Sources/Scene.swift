@@ -29,23 +29,24 @@ public struct Transition {
 
 
 
-public class Scene {
+public class VideoScene {
     public let id = UUID().uuidString
     public var duration: Double
     public var frameRate: Double
-    
+
     public let group: Group
     var transition: Transition
-    
+
     public var asset: AVURLAsset?
     public var size: CGSize
-    
+
     public enum AssetType: String {
         case image
         case video
         case gif
+        case text
     }
-    
+
     public init(id: String = UUID().uuidString, duration: Double, frameRate: Double, transition: Transition? = nil, size: CGSize = CGSize(width: 1200, height: 675)) {
         self.duration = duration
         self.frameRate = frameRate
@@ -53,15 +54,15 @@ public class Scene {
         self.transition = transition ?? Transition(type: .none, duration: 0.0)
         self.size = size
     }
-    
+
     public func makeSceneFilename() -> String {
         return "\(id).mp4"
     }
-    
+
     func loadSceneAsset(containingFolder: String) -> AVURLAsset {
         let path = "\(containingFolder)/\(makeSceneFilename())"
         let url = URL(fileURLWithPath: path)
-        
+
         return AVURLAsset(url: url)
     }
     
@@ -106,7 +107,7 @@ public class Scene {
         return nil
     }
     
-    public func addAsset(atLayerIndex: LayerObjectIndex, type: AssetType, frame: CGRect, rotation: Double = 0.0, assetURL: URL) -> Bool {
+    public func addAsset(atLayerIndex: LayerObjectIndex, type: AssetType, frame: CGRect, rotation: Double = 0.0, assetURL: URL, text: String) -> Bool {
         
         guard let layer = getGroupLayer(layerIndex: atLayerIndex, create: true) else { return false }
         
@@ -125,7 +126,7 @@ public class Scene {
                   }
         } else if type == .video {
             source = VideoSource(movieFileUrl: assetURL)
-        }
+        } 
         
         if let source = source {
             let surface = Surface(source: source, frame: frame, rotation: rotation)

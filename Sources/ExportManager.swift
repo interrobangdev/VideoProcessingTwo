@@ -12,7 +12,7 @@ public typealias SceneExportCompletion = (Bool) -> ()
 
 public struct ExportModel {
     let outputURL: URL
-    let scene: Scene
+    let scene: VideoScene
     let completion: SceneExportCompletion
     let progress: SceneExportProgress?
 }
@@ -30,11 +30,11 @@ public class ExportManager {
     }
     
     
-    public func exportScene(scene: Scene, outpuURL: URL, progress: SceneExportProgress?, completion: @escaping SceneExportCompletion) {
-        
+    public func exportScene(scene: VideoScene, outpuURL: URL, progress: SceneExportProgress?, completion: @escaping SceneExportCompletion) {
+
         let model = ExportModel(outputURL: outpuURL, scene: scene, completion: completion, progress: progress)
         scenesToExport.append(model)
-        
+
         exportScenes()
     }
     
