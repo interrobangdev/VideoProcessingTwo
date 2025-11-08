@@ -53,7 +53,7 @@ public class TextSource: Source {
         self.maxCharacters = maxCharacters
     }
     
-    public func getFrameAtTime(cmTime: CMTime) -> Frame? {
+    public func getFrameAtTime(cmTime: CMTime, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]?) -> Frame? {
         let timeInSeconds = cmTime.seconds
         
         // Create text chunks based on character limit and word boundaries

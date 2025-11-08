@@ -8,23 +8,24 @@
 import Foundation
 import CoreImage
 import CoreMedia
+import AVFoundation
 
 public class Layer {
     let id = UUID().uuidString
-    var surfaces: [Surface]
+    public var surfaces: [Surface]
     
     public init(id: String = UUID().uuidString, surfaces: [Surface]) {
         self.surfaces = surfaces
     }
     
-    func renderLayer(frameTime: Double) -> CIImage? {
+    func renderLayer(frameTime: Double, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
         var outputImage: CIImage?
         for surface in surfaces {
-            let frame = surface.source.getFrameAtTime(cmTime: frameTime.cmTime())
+            let frame = surface.source.getFrameAtTime(cmTime: frameTime.cmTime(), framesByTrackID: framesByTrackID)
             let frameCIImage = frame?.ciImageRepresentation()
-            
+
             if let adjusted = frameCIImage?.adjustedImage(rect: surface.frame, rotation: surface.rotation) {
-                
+
                 if let oi = outputImage {
                     outputImage = adjusted.composited(over: oi)
                 } else {
@@ -32,7 +33,7 @@ public class Layer {
                 }
             }
         }
-        
+
         return outputImage
     }
 }

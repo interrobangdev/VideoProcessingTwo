@@ -18,7 +18,7 @@ public class GIFImageSource: Source {
         self.loop = loop
     }
     
-    public func getFrameAtTime(cmTime: CMTime) -> (any Frame)? {
+    public func getFrameAtTime(cmTime: CMTime, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]?) -> (any Frame)? {
         var time = cmTime.seconds
         let gifDuration = Double(image.gifDuration)
         if loop,

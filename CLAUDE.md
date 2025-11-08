@@ -35,7 +35,7 @@ swift package generate-xcodeproj
 ### Core Hierarchy
 The composition system follows a hierarchical structure:
 - **Composition**: Top-level container with scenes and output configuration
-- **Scene**: Time-based container with duration, frame rate, and a root group
+- **VideoScene**: Time-based container with duration, frame rate, and a root group
 - **Group**: Container for layers and nested groups, supports filters and masks
 - **Layer**: Contains surfaces (media elements) that are composited together
 - **Surface**: Wraps a Source with positioning (frame, rotation)
@@ -86,7 +86,7 @@ The composition system follows a hierarchical structure:
 2. For video: `MovieWriter` is initialized with H.264 encoding settings
 3. For GIF: `GIFWriter` is initialized with frame count
 4. `generateFrames()` iterates through each frame at the specified frame rate
-5. For each frame time, `Scene.group.renderGroup()` is called:
+5. For each frame time, `VideoScene.group.renderGroup()` is called:
    - Groups recursively render child groups and layers
    - Layers composite their surfaces using CoreImage's `composited(over:)`
    - Source objects provide frames via `getFrameAtTime(cmTime:)`

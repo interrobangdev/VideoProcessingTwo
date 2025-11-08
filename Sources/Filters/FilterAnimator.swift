@@ -57,18 +57,25 @@ public class FilterAnimator {
         } else if percentComplete < 0.0 {
             percentComplete = 0.0
         }
+
+        let rawPercent = percentComplete
         percentComplete = tweenFunctionProvider.tweenValue(input: percentComplete)
-        
+
         if type == .SingleValue {
             guard let sv = startValue,
-                  let ev = endValue else { return percentComplete }
-            return ((ev - sv) * percentComplete) + sv
+                  let ev = endValue else {
+                print("⚠️ FilterAnimator: Missing start/end values for SingleValue type")
+                return percentComplete
+            }
+            let result = ((ev - sv) * percentComplete) + sv
+
+            return result
         } else if type == .Rect {
             guard let sr = startRect,
                   let er = endRect else { return CGRect.zero }
             let origin = ((er.origin - sr.origin) * percentComplete) + sr.origin
             let size = ((er.size - sr.size) * percentComplete) + sr.size
-                          
+
             return CGRect(origin: origin, size: size)
         } else {
 //        else if type == .Point {

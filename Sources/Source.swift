@@ -9,5 +9,5 @@ import Foundation
 import CoreMedia
 
 public protocol Source {
-    func getFrameAtTime(cmTime: CMTime) -> Frame?
+    func getFrameAtTime(cmTime: CMTime, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]?) -> Frame?
 }

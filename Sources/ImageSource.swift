@@ -16,7 +16,7 @@ public class ImageSource: Source {
         self.image = image
     }
     
-    public func getFrameAtTime(cmTime: CMTime) -> (any Frame)? {
+    public func getFrameAtTime(cmTime: CMTime, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]?) -> (any Frame)? {
         return LowImageFrame(cgImage: image, time: CMTime.indefinite)
     }
 }

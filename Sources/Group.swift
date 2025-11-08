@@ -8,6 +8,7 @@
 import Foundation
 import CoreImage
 import CoreMedia
+import AVFoundation
 
 public protocol Mask {
     func maskImage(image: CIImage) -> CIImage?
@@ -33,12 +34,12 @@ public class Group {
         return Group(groups: [], layers: [layer], filters: [], mask: nil)
     }
     
-    func renderGroup(frameTime: Double, compositionTimeOffset: Double) -> CIImage? {
+    func renderGroup(frameTime: Double, compositionTimeOffset: Double, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
         var outputImage: CIImage?
 
         if layers.count > 0 {
             for layer in layers {
-                if let outImage = layer.renderLayer(frameTime: frameTime) {
+                if let outImage = layer.renderLayer(frameTime: frameTime, framesByTrackID: framesByTrackID) {
                     if let oi = outputImage {
                         outputImage = outImage.composited(over: oi)
                     } else {
@@ -47,10 +48,10 @@ public class Group {
                 }
             }
         }
-        
+
         if groups.count > 0 {
             for group in groups {
-                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
+                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, framesByTrackID: framesByTrackID) {
                     if let oi = outputImage {
                         outputImage = outImage.composited(over: oi)
                     } else {
@@ -59,7 +60,7 @@ public class Group {
                 }
             }
         }
-        
+
         for filter in filters {
             if let oi = outputImage {
                 for animator in filter.filterAnimators {
@@ -69,7 +70,7 @@ public class Group {
                 outputImage = filter.filterContent(image: oi, sourceTime: nil, sceneTime: frameTime.cmTime(), compositionTime: (frameTime + compositionTimeOffset).cmTime())
             }
         }
-        
+
         return outputImage
     }
 }
