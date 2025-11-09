@@ -16,11 +16,20 @@ public class VideoSource: Source {
     let url: URL
     public var trackID: CMPersistentTrackID?
 
+    /// When this video starts playing in the composition (in seconds)
+    public var compositionStartTime: Double = 0.0
+
+    /// How long this video plays in the composition (in seconds)
+    public var duration: Double = 10.0
+
+    /// What time in the source video to start from (in seconds)
+    public var sourceStartTime: Double = 0.0
+
     public var naturalSize: CGSize {
         return currentFrame?.size ?? CGSize(width: 1920, height: 1080)
     }
 
-    public var duration: Double {
+    public var sourceVideoDuration: Double {
         return reader?.duration ?? 0.0
     }
 

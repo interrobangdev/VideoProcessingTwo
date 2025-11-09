@@ -66,8 +66,6 @@ public class VideoCompositor {
 
     /// Add video tracks to composition for each discovered VideoSource
     private func addVideoSourceTracks(to composition: AVMutableComposition) throws {
-        let targetDuration = CMTime(seconds: scene.duration, preferredTimescale: 600)
-
         for videoSource in videoSources {
             guard let videoTrack = composition.addMutableTrack(
                 withMediaType: .video,
@@ -83,26 +81,48 @@ public class VideoCompositor {
                 throw AVVideoCompositionError.noVideoTracksInAsset
             }
 
-            let videoDuration = sourceVideoTrack.timeRange.duration
+            let sourceVideoDuration = sourceVideoTrack.timeRange.duration
+            let compositionStartTime = CMTime(seconds: videoSource.compositionStartTime, preferredTimescale: 600)
+            let targetDuration = CMTime(seconds: videoSource.duration, preferredTimescale: 600)
+            let sourceStartTime = CMTime(seconds: videoSource.sourceStartTime, preferredTimescale: 600)
 
             do {
-                // If video is shorter than target duration, loop it to fill the duration
-                var currentTime = CMTime.zero
-                while currentTime.seconds < targetDuration.seconds {
-                    let remainingTime = targetDuration.seconds - currentTime.seconds
-                    let segmentDuration = min(videoDuration.seconds, remainingTime)
-                    let videoTimeRange = CMTimeRange(
-                        start: .zero,
-                        duration: CMTime(seconds: segmentDuration, preferredTimescale: 600)
+                // Insert video segments starting at sourceStartTime, looping if necessary
+                var currentCompositionTime = compositionStartTime
+                var currentSourceTime = sourceStartTime
+
+                while currentCompositionTime.seconds < (compositionStartTime.seconds + targetDuration.seconds) {
+                    let remainingDuration = CMTimeSubtract(
+                        CMTimeAdd(compositionStartTime, targetDuration),
+                        currentCompositionTime
                     )
+
+                    // Calculate how much source video is available from currentSourceTime
+                    let availableSourceDuration = CMTimeSubtract(sourceVideoDuration, currentSourceTime)
+
+                    // If we've reached the end of the source, loop back to sourceStartTime
+                    var segmentSourceTime = currentSourceTime
+                    var segmentSourceDuration = availableSourceDuration
+
+                    if segmentSourceDuration.seconds <= 0 {
+                        // Loop back to start
+                        segmentSourceTime = sourceStartTime
+                        segmentSourceDuration = CMTimeSubtract(sourceVideoDuration, sourceStartTime)
+                    }
+
+                    // Take the minimum of remaining composition duration and available source duration
+                    let segmentDuration = CMTimeMinimum(remainingDuration, segmentSourceDuration)
+
+                    let videoTimeRange = CMTimeRange(start: segmentSourceTime, duration: segmentDuration)
 
                     try videoTrack.insertTimeRange(
                         videoTimeRange,
                         of: sourceVideoTrack,
-                        at: currentTime
+                        at: currentCompositionTime
                     )
 
-                    currentTime = CMTimeAdd(currentTime, videoTimeRange.duration)
+                    currentCompositionTime = CMTimeAdd(currentCompositionTime, segmentDuration)
+                    currentSourceTime = CMTimeAdd(segmentSourceTime, segmentDuration)
                 }
 
                 // Set the trackID on the VideoSource so it knows which frame to pull from the render context

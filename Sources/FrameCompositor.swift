@@ -91,7 +91,7 @@ public class FrameCompositor {
                 let frameTime = Double(i) * (1.0 / scene.frameRate)
 
                 let renderStart = CFAbsoluteTimeGetCurrent()
-                if let outputImage = scene.group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
+                if let outputImage = scene.renderScene(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset) {
                     renderTime += CFAbsoluteTimeGetCurrent() - renderStart
 
                     let callbackStart = CFAbsoluteTimeGetCurrent()

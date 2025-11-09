@@ -141,7 +141,7 @@ public class SceneVideoCompositor: NSObject, AVVideoCompositing {
         let sourceImage = CIImage(cvPixelBuffer: sourceFrame)
 
         // Render the scene at the current time, passing the frames dictionary to VideoSource instances
-        if let outputImage = instruction.scene.group.renderGroup(frameTime: time, compositionTimeOffset: 0.0, framesByTrackID: framesByTrackID) {
+        if let outputImage = instruction.scene.renderScene(frameTime: time, compositionTimeOffset: 0.0, framesByTrackID: framesByTrackID) {
             guard let pixelBuffer = asyncVideoCompositionRequest.renderContext.newPixelBuffer() else {
                 asyncVideoCompositionRequest.finish(with: NSError(domain: "SceneVideoCompositor", code: -4))
                 return

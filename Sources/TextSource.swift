@@ -43,7 +43,16 @@ public class TextSource: Source {
     public var wordDuration: Double
     public var animationType: TextAnimationType
     public var maxCharacters: Int
-    
+
+    /// When this text starts displaying in the composition (in seconds)
+    public var compositionStartTime: Double = 0.0
+
+    /// How long this text displays in the composition (in seconds)
+    public var duration: Double = 10.0
+
+    /// Not used for text, but required by protocol
+    public var sourceStartTime: Double = 0.0
+
     public init(words: [String], textStyle: TextStyle = TextStyle(), canvasSize: CGSize, wordDuration: Double = 1.0, animationType: TextAnimationType = .swap, maxCharacters: Int = 20) {
         self.words = words
         self.textStyle = textStyle
@@ -54,22 +63,34 @@ public class TextSource: Source {
     }
     
     public func getFrameAtTime(cmTime: CMTime, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]?) -> Frame? {
-        let timeInSeconds = cmTime.seconds
-        
+        let compositionTime = cmTime.seconds
+
+        // Check if we're within the active time window for this text
+        let startTime = compositionStartTime
+        let endTime = compositionStartTime + duration
+
+        if compositionTime < startTime || compositionTime >= endTime {
+            // Text is not active at this time
+            return nil
+        }
+
+        // Calculate time within the text's playback window
+        let timeIntoText = compositionTime - startTime
+
         // Create text chunks based on character limit and word boundaries
         let textChunks = createTextChunks()
-        
+
         if textChunks.isEmpty {
             return nil
         }
-        
-        let currentChunkIndex = Int(timeInSeconds / wordDuration) % textChunks.count
-        let timeInChunk = timeInSeconds.truncatingRemainder(dividingBy: wordDuration)
+
+        let currentChunkIndex = Int(timeIntoText / wordDuration) % textChunks.count
+        let timeInChunk = timeIntoText.truncatingRemainder(dividingBy: wordDuration)
         let progressInChunk = timeInChunk / wordDuration
-        
+
         let currentText = textChunks[currentChunkIndex]
         let nextText = textChunks[(currentChunkIndex + 1) % textChunks.count]
-        
+
         if let textImage = animationType.renderText(
             currentWord: currentText,
             nextWord: nextText,
@@ -82,7 +103,7 @@ public class TextSource: Source {
                 return LowImageFrame(cgImage: cgImage, time: cmTime)
             }
         }
-        
+
         return nil
     }
     

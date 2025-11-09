@@ -66,6 +66,11 @@ public class VideoScene {
         return AVURLAsset(url: url)
     }
     
+    public func renderScene(frameTime: Double, compositionTimeOffset: Double, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
+        let inputImage = CIImage.black.cropped(to: CGRect(origin: .zero, size: size))
+        return group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: inputImage)
+    }
+    
     public func getGroup(layerIndex: LayerObjectIndex, create: Bool) -> Group? {
         var group = self.group
         for groupIndex in layerIndex.groupIndices {

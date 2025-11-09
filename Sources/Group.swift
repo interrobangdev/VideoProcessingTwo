@@ -34,8 +34,8 @@ public class Group {
         return Group(groups: [], layers: [layer], filters: [], mask: nil)
     }
     
-    func renderGroup(frameTime: Double, compositionTimeOffset: Double, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
-        var outputImage: CIImage?
+    func renderGroup(frameTime: Double, compositionTimeOffset: Double, inputImage: CIImage?, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
+        var outputImage = inputImage
 
         if layers.count > 0 {
             for layer in layers {
@@ -51,7 +51,7 @@ public class Group {
 
         if groups.count > 0 {
             for group in groups {
-                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, framesByTrackID: framesByTrackID) {
+                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: outputImage, framesByTrackID: framesByTrackID) {
                     if let oi = outputImage {
                         outputImage = outImage.composited(over: oi)
                     } else {
