@@ -68,7 +68,7 @@ public class VideoScene {
     
     public func renderScene(frameTime: Double, compositionTimeOffset: Double, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
         let inputImage = CIImage.black.cropped(to: CGRect(origin: .zero, size: size))
-        return group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: inputImage)
+        return group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: inputImage, framesByTrackID: framesByTrackID)
     }
     
     public func getGroup(layerIndex: LayerObjectIndex, create: Bool) -> Group? {
