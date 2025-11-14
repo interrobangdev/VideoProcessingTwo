@@ -66,7 +66,7 @@ extension PlatformColor {
         #endif
     }
     
-    static var clear: PlatformColor {
+    static var platformClear: PlatformColor {
         #if canImport(UIKit)
         return UIColor.clear
         #elseif canImport(AppKit)

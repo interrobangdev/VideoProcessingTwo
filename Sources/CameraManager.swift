@@ -144,7 +144,7 @@ public class CameraManager : NSObject {
     }
 
     #if os(iOS)
-    func swapCamera(position: AVCaptureDevice.Position) {
+    public func swapCamera(position: AVCaptureDevice.Position) {
         if devicePosition == position { return }
         devicePosition = position
 
