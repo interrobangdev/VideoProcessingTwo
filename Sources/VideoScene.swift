@@ -34,7 +34,7 @@ public class VideoScene {
     public var duration: Double
     public var frameRate: Double
 
-    public let group: Group
+    public var group: LayerGroup
     var transition: Transition
 
     public var asset: AVURLAsset?
@@ -50,7 +50,7 @@ public class VideoScene {
     public init(id: String = UUID().uuidString, duration: Double, frameRate: Double, transition: Transition? = nil, size: CGSize = CGSize(width: 1200, height: 675)) {
         self.duration = duration
         self.frameRate = frameRate
-        self.group = Group(groups: [], layers: [], filters: [], mask: nil)
+        self.group = LayerGroup(groups: [], layers: [], filters: [], mask: nil)
         self.transition = transition ?? Transition(type: .none, duration: 0.0)
         self.size = size
     }
@@ -71,7 +71,7 @@ public class VideoScene {
         return group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: inputImage, framesByTrackID: framesByTrackID)
     }
     
-    public func getGroup(layerIndex: LayerObjectIndex, create: Bool) -> Group? {
+    public func getGroup(layerIndex: LayerObjectIndex, create: Bool) -> LayerGroup? {
         var group = self.group
         for groupIndex in layerIndex.groupIndices {
             if group.groups.count > groupIndex {
@@ -80,7 +80,7 @@ public class VideoScene {
                 if create {
                     let groupCount = (groupIndex + 1) - group.groups.count
                     for _ in 0..<groupCount {
-                        group.groups.append(Group.emptyGroup())
+                        group.groups.append(LayerGroup.emptyGroup())
                     }
                     
                     group = group.groups[groupIndex]

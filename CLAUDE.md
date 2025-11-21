@@ -36,7 +36,7 @@ swift package generate-xcodeproj
 The composition system follows a hierarchical structure:
 - **Composition**: Top-level container with scenes and output configuration
 - **VideoScene**: Time-based container with duration, frame rate, and a root group
-- **Group**: Container for layers and nested groups, supports filters and masks
+- **LayerGroup**: Container for layers and nested groups, supports filters and masks
 - **Layer**: Contains surfaces (media elements) that are composited together
 - **Surface**: Wraps a Source with positioning (frame, rotation)
 - **Source**: Protocol for media providers (Image, Video, GIF, Text)
@@ -55,7 +55,7 @@ The composition system follows a hierarchical structure:
 - `MetalEnvironment.swift`: Metal/CoreImage rendering context (singleton pattern)
 - `MovieWriter.swift`: H.264 video encoding with pixel buffer management
 - `GIFWriter.swift`: Animated GIF creation and export
-- `Group.swift`: Hierarchical composition with filter application
+- `LayerGroup.swift`: Hierarchical composition with filter application
 - `Layer.swift`: Surface composition within layers
 
 #### Utilities (`Sources/`)
@@ -68,7 +68,7 @@ The composition system follows a hierarchical structure:
 - `FilterAnimator.swift`: Keyframe animation system with tween functions
   - Supports three animation types: `SingleValue`, `Point`, `Rect`
   - Uses `TweenFunctionProvider` for interpolation (e.g., `LinearFunction`)
-  - Animations are evaluated per-frame in `Group.renderGroup()`
+  - Animations are evaluated per-frame in `LayerGroup.renderGroup()`
 - Individual filters: `GaussianBlur.swift`, `ColorAdjustment.swift`, `GlitchEffect.swift`, `Fade.swift`, `Scale.swift`, `Rotate.swift`, `Translate.swift`, etc.
 - `Shaders.metal`: Custom Metal shaders for advanced effects
 
@@ -87,7 +87,7 @@ The composition system follows a hierarchical structure:
 3. For GIF: `GIFWriter` is initialized with frame count
 4. `generateFrames()` iterates through each frame at the specified frame rate
 5. For each frame time, `VideoScene.group.renderGroup()` is called:
-   - Groups recursively render child groups and layers
+   - LayerGroups recursively render child groups and layers
    - Layers composite their surfaces using CoreImage's `composited(over:)`
    - Source objects provide frames via `getFrameAtTime(cmTime:)`
    - Filters apply effects with animated properties updated via `FilterAnimator.tweenValue()`
@@ -132,7 +132,7 @@ public protocol Filter {
   - `startTime` and `endTime` define the animation duration
   - `tweenFunctionProvider` controls easing (default: `LinearFunction`)
   - Three value types: `SingleValue` (Double), `Point` (CGPoint), `Rect` (CGRect)
-- Filters check `filterAnimators` array during `Group.renderGroup()` and update values via `updateFilterValue()`
+- Filters check `filterAnimators` array during `LayerGroup.renderGroup()` and update values via `updateFilterValue()`
 - Custom tween functions can be created by implementing `TweenFunctionProvider` protocol
 
 ### Video Export Details

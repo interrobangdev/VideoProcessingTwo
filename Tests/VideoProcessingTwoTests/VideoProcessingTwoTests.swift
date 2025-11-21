@@ -62,10 +62,10 @@ final class VideoProcessingTwoTests: XCTestCase {
         XCTAssertTrue(filename.contains("-") || filename.count > 10) // UUID format
     }
 
-    // MARK: - Group Tests
+    // MARK: - LayerGroup Tests
 
-    func testEmptyGroupCreation() throws {
-        let group = Group.emptyGroup()
+    func testEmptyLayerGroupCreation() throws {
+        let group = LayerGroup.emptyGroup()
 
         XCTAssertEqual(group.groups.count, 0)
         XCTAssertEqual(group.layers.count, 1)
@@ -73,17 +73,17 @@ final class VideoProcessingTwoTests: XCTestCase {
         XCTAssertNil(group.mask)
     }
 
-    func testGroupWithLayers() throws {
+    func testLayerGroupWithLayers() throws {
         let layer1 = Layer(surfaces: [])
         let layer2 = Layer(surfaces: [])
-        let group = Group(groups: [], layers: [layer1, layer2], filters: [], mask: nil)
+        let group = LayerGroup(groups: [], layers: [layer1, layer2], filters: [], mask: nil)
 
         XCTAssertEqual(group.layers.count, 2)
     }
 
-    func testNestedGroups() throws {
-        let childGroup = Group.emptyGroup()
-        let parentGroup = Group(groups: [childGroup], layers: [], filters: [], mask: nil)
+    func testNestedLayerGroups() throws {
+        let childGroup = LayerGroup.emptyGroup()
+        let parentGroup = LayerGroup(groups: [childGroup], layers: [], filters: [], mask: nil)
 
         XCTAssertEqual(parentGroup.groups.count, 1)
         XCTAssertEqual(parentGroup.layers.count, 0)

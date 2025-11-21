@@ -48,7 +48,7 @@ public class VideoCompositor {
     // MARK: - Private Methods
 
     /// Recursively extract all VideoSource instances from a Group hierarchy
-    private func extractVideoSources(from group: Group) {
+    private func extractVideoSources(from group: LayerGroup) {
         // Extract from layers
         for layer in group.layers {
             for surface in layer.surfaces {

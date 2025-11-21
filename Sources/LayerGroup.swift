@@ -1,5 +1,5 @@
 //
-//  Group.swift
+//  LayerGroup.swift
 //  VideoProcessingTwoContainer
 //
 //  Created by Jake Gundersen on 4/9/24.
@@ -14,14 +14,14 @@ public protocol Mask {
     func maskImage(image: CIImage) -> CIImage?
 }
 
-public class Group {
+public class LayerGroup {
     var id: String = UUID().uuidString
-    public var groups: [Group]
+    public var groups: [LayerGroup]
     public var layers: [Layer]
     public var filters: [Filter]
     public var mask: Mask?
     
-    public init(id: String = UUID().uuidString, groups: [Group], layers: [Layer], filters: [Filter], mask: Mask?) {
+    public init(id: String = UUID().uuidString, groups: [LayerGroup], layers: [Layer], filters: [Filter], mask: Mask?) {
         self.id = id
         self.groups = groups
         self.layers = layers
@@ -29,12 +29,12 @@ public class Group {
         self.mask = mask
     }
     
-    static func emptyGroup() -> Group {
+    static func emptyGroup() -> LayerGroup {
         let layer = Layer(surfaces: [])
-        return Group(groups: [], layers: [layer], filters: [], mask: nil)
+        return LayerGroup(groups: [], layers: [layer], filters: [], mask: nil)
     }
     
-    func renderGroup(frameTime: Double, compositionTimeOffset: Double, inputImage: CIImage?, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
+    public func renderGroup(frameTime: Double, compositionTimeOffset: Double, inputImage: CIImage?, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
         var outputImage = inputImage
 
         if layers.count > 0 {

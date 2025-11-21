@@ -29,6 +29,26 @@ public protocol Filter {
     func filterContent(image: CIImage, sourceTime: CMTime?, sceneTime: CMTime?, compositionTime: CMTime?) -> CIImage?
 }
 
+// MARK: - Filter Extension with Default Implementation
+
+public extension Filter {
+    /// Default implementation that applies animator-driven updates before processing the image
+    func filterContentWithAnimators(image: CIImage, sourceTime: CMTime?, sceneTime: CMTime?, compositionTime: CMTime?) -> CIImage? {
+        // Get the current time for animation calculations
+        let currentTime = compositionTime ?? sceneTime ?? sourceTime ?? CMTime.zero
+        let timeSeconds = CMTimeGetSeconds(currentTime)
+
+        // Apply all animators to update filter properties
+        for animator in filterAnimators {
+            let animatedValue = animator.tweenValue(time: timeSeconds)
+            updateFilterValue(filterProperty: animator.animationProperty, value: animatedValue)
+        }
+
+        // Process the image with updated values
+        return filterContent(image: image, sourceTime: sourceTime, sceneTime: sceneTime, compositionTime: compositionTime)
+    }
+}
+
 public protocol TweenFunctionProvider {
     func tweenValue(input: Double) -> Double
 }
