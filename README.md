@@ -1,139 +1,184 @@
 # VideoProcessingTwo
 
-A powerful, production-ready Swift video composition and effects library for iOS (15+) and macOS (11+). Built on a decade of experience crafting professional video pipelines, VideoProcessingTwo combines the flexibility of Core Image with the performance of Metal shaders, all wrapped in an intuitive hierarchical composition API.
+`VideoProcessingTwo` is a Swift package for building layered video scenes on iOS and macOS with Core Image, Metal, and AVFoundation. It gives you a small composition model for arranging sources, applying filters, previewing frames, and exporting finished output as video or GIF.
 
-## Features
+## What It Supports
 
-### Hierarchical Composition Architecture
-Organize complex video projects with unlimited nesting depth:
-- **Composition** → **VideoScene** → **LayerGroup** (recursive) → **Layer** → **Surface** → **Source**
-- Apply filters at any level in the hierarchy with proper inheritance
-- Supports layer masking for advanced compositing
-
-### Rich Media Sources
-Mix multiple input types seamlessly in a single composition:
-- **Images** - Static images with configurable duration
-- **Videos** - Full video playback with looping, frame-accurate seeking, and AVVideoComposition integration
-- **Animated GIFs** - With intelligent frame caching and proper timing
-- **Text** - Rich text rendering with 8 animation types (fade, slide, rotate, scale, swap), custom fonts, colors, backgrounds, and stroke effects
-- **Live Camera** - Real-time camera capture with exposure, zoom, torch, and flash controls (iOS)
-
-### Professional Filter System
-14+ built-in filters with real-time parameter animation:
-- **Core Image Filters**: Gaussian Blur, Color Adjustment (brightness/contrast/saturation), Crystallize effect, Voronoi stylize
-- **Custom Metal Shaders**: Glitch effects with intensity control and pixelation
-- **Geometric**: Rotate, Scale, Translate with center-point control
-- **Visual Effects**: Fade, Glitch with color shifts
-
-### Advanced Animation System
-Drive filter parameters with precision control:
-
-**Bezier Path-Based Easing**
-- Define complex animation curves with multiple control points and handles
-- Create professional ease-in, ease-out, custom bounce, and other timing curves
-- Per-frame evaluation for smooth interpolation
-
-**Arbitrary Input Drivers** *(Extensible Framework)*
-- Vision Framework integration: Animate based on detected poses, hands, faces, objects
-- Audio data driver: Synchronize effects to music or sound
-- Custom drivers: Build your own parameter animation sources
-- Keyframe system with start/end times and tween function support
-
-### Export Capabilities
-- **Video Export** - H.264/MP4 with configurable bitrate and automatic size optimization
-- **GIF Export** - Animated GIFs with frame timing preservation
-- Real-time frame callbacks for progress monitoring and advanced workflows
-- Scene composition with temporal offsetting for multi-segment videos
-
-### Cross-Platform & Modern Architecture
-- Unified API for iOS and macOS
-- Metal/CoreImage rendering with GPU acceleration
-- Custom pixel buffer management and thread-safe export pipelines
-- Rich geometry extensions for intuitive transforms and positioning
-- Frame abstraction supporting multiple representations (UIImage, CVPixelBuffer, CGImage)
-
-### Live Rendering
-- SwiftUI Metal view support for real-time preview
-- Full camera pipeline integration
-- Frame-accurate playback with filter preview
+- Hierarchical scene composition with `VideoScene`, `LayerGroup`, `Layer`, and `Surface`
+- Multiple source types in the same scene:
+  - `VideoSource`
+  - `ImageSource`
+  - `GIFImageSource`
+  - `TextSource`
+  - `CameraSource` on iOS
+- Built-in filters for blur, color adjustment, transforms, fades, crystallize, and glitch-style effects
+- Animated filter values with `FilterAnimator`, `LinearFunction`, and Bezier tween helpers
+- Export to `.mp4` video or animated GIF
+- Metal-backed rendering utilities, including a SwiftUI `MetalView` for live preview on iOS
+- AVFoundation composition helpers for integrating with `AVVideoComposition`
 
 ## Architecture
 
-The library uses a sophisticated rendering pipeline:
+The package is centered around a scene graph:
 
-1. **Composition Graph** - Hierarchical structure of groups, layers, and effects
-2. **Metal Environment** - Singleton GPU context managing rendering resources
-3. **Frame Compositor** - Orchestrates per-frame rendering with timing precision
-4. **Layer Rendering** - Recursive group rendering with filter application and blending
-5. **Export Pipeline** - Converts frames to video or GIF with proper encoding
+`VideoScene -> LayerGroup -> Layer -> Surface -> Source`
+
+- A `VideoScene` defines duration, frame rate, and render size.
+- A `LayerGroup` can contain nested groups, layers, filters, and an optional mask.
+- A `Layer` composites one or more `Surface` values.
+- A `Surface` places a `Source` into a rectangle with rotation.
+- A `Source` provides frames over time.
+
+This keeps the rendering model simple while still supporting nested compositions and scene-level effects.
 
 ## Quick Start
 
 ```swift
-// Create a composition
-let composition = Composition()
-let scene = VideoScene(duration: 10, frameRate: 30, outputSize: CGSize(width: 1080, height: 1920))
+import CoreGraphics
+import VideoProcessingTwo
 
-// Build a composition with multiple sources
-let videoLayer = Layer()
-videoLayer.addSurface(Surface(source: VideoSource(url: videoURL)))
+let renderSize = CGSize(width: 1080, height: 1920)
+let scene = VideoScene(duration: 5, frameRate: 30, size: renderSize)
 
-let textLayer = Layer()
-textLayer.addSurface(Surface(source: TextSource(text: "Hello Video")))
+let videoSource = VideoSource(url: videoURL)
+videoSource.compositionStartTime = 0
+videoSource.duration = 5
 
-let group = LayerGroup()
-group.addLayer(videoLayer)
-group.addLayer(textLayer)
+let titleSource = TextSource(
+    words: ["Hello", "from", "VideoProcessingTwo"],
+    canvasSize: renderSize,
+    wordDuration: 0.8,
+    animationType: .fadeInOut,
+    maxCharacters: 18
+)
+titleSource.compositionStartTime = 0
+titleSource.duration = 5
 
-scene.group = group
+let videoLayer = Layer(surfaces: [
+    Surface(
+        source: videoSource,
+        frame: CGRect(origin: .zero, size: renderSize),
+        rotation: 0
+    )
+])
 
-// Add animated effects
-let blur = GaussianBlur(radius: 10)
-let animator = FilterAnimator(startTime: 0, endTime: 5, value: .singleValue(0))
-blur.filterAnimators = [animator]
-group.filters.append(blur)
+let textLayer = Layer(surfaces: [
+    Surface(
+        source: titleSource,
+        frame: CGRect(x: 120, y: 760, width: 840, height: 240),
+        rotation: 0
+    )
+])
 
-// Export to video
-let exporter = ExportManager()
-exporter.exportComposition(composition, scenes: [scene], outputURL: outputURL) { progress in
-    print("Export progress: \(progress)")
-}
+let blur = GaussianBlur(radius: 0, filterAnimators: [])
+
+scene.group = LayerGroup(
+    groups: [],
+    layers: [videoLayer, textLayer],
+    filters: [blur],
+    mask: nil
+)
+
+ExportManager.shared.exportScene(
+    scene: scene,
+    outpuURL: outputURL,
+    progress: { sceneID, progress in
+        print("Exporting \\(sceneID): \\(progress)")
+    },
+    completion: { success in
+        print("Finished: \\(success)")
+    }
+)
 ```
+
+## Sources
+
+### Video
+
+`VideoSource` supports:
+
+- Time-windowed playback inside a composition
+- Source offsets with `sourceStartTime`
+- Looping behavior during export
+- Track-based integration for `AVVideoComposition` workflows
+
+### Images and GIFs
+
+- `ImageSource` displays a still image for a configurable duration
+- `GIFImageSource` plays animated GIFs with timing-aware frame selection and optional looping
+
+### Text
+
+`TextSource` can animate words or short phrases with:
+
+- Swap
+- Fade in/out
+- Slide left/right/up/down
+- Rotate in
+- Scale in
+
+It also supports font, color, alignment, optional background color, and stroke styling.
+
+### Camera
+
+`CameraSource` and `CameraManager` provide live camera frames on iOS for preview-driven workflows and real-time composition.
+
+## Filters and Animation
+
+Included filters currently live under `Sources/Filters` and include:
+
+- `GaussianBlur`
+- `ColorAdjustment`
+- `Crystallize`
+- `Rotate`
+- `Scale`
+- `Translate`
+- `Fade`
+- `GlitchEffect`
+
+Animated filter values are driven by `FilterAnimator`. The package currently includes:
+
+- Linear interpolation with `LinearFunction`
+- Bezier-based tweening with `BezierPathTweenFunction` and `CubicBezierTweenFunction`
+
+## Export
+
+For most usage, `ExportManager` is the main export entry point:
+
+- Queue one or more scene exports
+- Receive progress callbacks per scene
+- Export rendered output to video
+
+For lower-level control, `FrameCompositor` can export:
+
+- H.264 video
+- Animated GIF
+- Per-frame callbacks during render
 
 ## Installation
 
-Add VideoProcessingTwo to your `Package.swift`:
+Add the package to your `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/yourusername/VideoProcessingTwo.git", from: "1.0.0")
+.package(url: "https://github.com/interrobangdev/VideoProcessingTwo.git", from: "1.0.0")
 ```
 
-Or in Xcode, use File → Add Packages and enter the repository URL.
+Or add it in Xcode with **File -> Add Package Dependencies...** and use:
+
+`https://github.com/interrobangdev/VideoProcessingTwo.git`
 
 ## Requirements
 
 - iOS 15.0+ or macOS 11.0+
-- Swift 5.5+
-- Xcode 13.0+
+- Swift 5.10+
+- Xcode 15+
 
-## Use Cases
+## Sample Project
 
-- Video editing applications
-- Social media content creation tools
-- Real-time video effects processing
-- Educational video generation
-- Professional video composition workflows
-- Live streaming applications with effects
+If you want to see this package used in a real app, check out the companion sample project:
 
-## Design Philosophy
-
-Built on lessons learned from a decade of video pipeline development, VideoProcessingTwo prioritizes:
-- **Simplicity** - Intuitive APIs that hide complexity
-- **Performance** - GPU-accelerated rendering with efficient memory management
-- **Flexibility** - Extensible filter system and arbitrary animation drivers
-- **Quality** - Production-ready export with professional codec support
-- **Cross-Platform** - Write once, deploy to iOS and macOS
+[VideoProcessingTwoSamples](https://github.com/interrobangdev/VideoProcessingTwoSamples)
 
 ## License
 
-VideoProcessingTwo is released under the BSD-3-Clause License. See the LICENSE file for details.
+VideoProcessingTwo is released under the BSD-3-Clause License. See [LICENSE](LICENSE) for details.
