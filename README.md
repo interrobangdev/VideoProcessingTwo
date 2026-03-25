@@ -19,8 +19,8 @@ Mix multiple input types seamlessly in a single composition:
 - **Live Camera** - Real-time camera capture with exposure, zoom, torch, and flash controls (iOS)
 
 ### Professional Filter System
-13+ built-in filters with real-time parameter animation:
-- **Core Image Filters**: Gaussian Blur, Color Adjustment (brightness/contrast/saturation), Crystallize effect
+14+ built-in filters with real-time parameter animation:
+- **Core Image Filters**: Gaussian Blur, Color Adjustment (brightness/contrast/saturation), Crystallize effect, Voronoi stylize
 - **Custom Metal Shaders**: Glitch effects with intensity control and pixelation
 - **Geometric**: Rotate, Scale, Translate with center-point control
 - **Visual Effects**: Fade, Glitch with color shifts

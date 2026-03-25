@@ -34,7 +34,13 @@ public class LayerGroup {
         return LayerGroup(groups: [], layers: [layer], filters: [], mask: nil)
     }
     
-    public func renderGroup(frameTime: Double, compositionTimeOffset: Double, inputImage: CIImage?, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
+    public func renderGroup(
+        frameTime: Double,
+        compositionTimeOffset: Double,
+        inputImage: CIImage?,
+        framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil,
+        bodyPoseParameterDriver: BodyPoseFilterParameterDriver? = nil
+    ) -> CIImage? {
         var outputImage = inputImage
 
         if layers.count > 0 {
@@ -51,7 +57,13 @@ public class LayerGroup {
 
         if groups.count > 0 {
             for group in groups {
-                if let outImage = group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: outputImage, framesByTrackID: framesByTrackID) {
+                if let outImage = group.renderGroup(
+                    frameTime: frameTime,
+                    compositionTimeOffset: compositionTimeOffset,
+                    inputImage: outputImage,
+                    framesByTrackID: framesByTrackID,
+                    bodyPoseParameterDriver: bodyPoseParameterDriver
+                ) {
                     if let oi = outputImage {
                         outputImage = outImage.composited(over: oi)
                     } else {
@@ -63,11 +75,21 @@ public class LayerGroup {
 
         for filter in filters {
             if let oi = outputImage {
-                for animator in filter.filterAnimators {
-                    let tweenedValue = animator.tweenValue(time: frameTime)
-                    filter.updateFilterValue(filterProperty: animator.animationProperty, value: tweenedValue)
+                bodyPoseParameterDriver?.apply(
+                    to: filter,
+                    at: (frameTime + compositionTimeOffset).cmTime()
+                )
+
+                if frameTime == 0.0, let statefulFilter = filter as? StatefulFilter {
+                    statefulFilter.resetState()
                 }
-                outputImage = filter.filterContent(image: oi, sourceTime: nil, sceneTime: frameTime.cmTime(), compositionTime: (frameTime + compositionTimeOffset).cmTime())
+
+                outputImage = filter.filterContentWithAnimators(
+                    image: oi,
+                    sourceTime: nil,
+                    sceneTime: frameTime.cmTime(),
+                    compositionTime: (frameTime + compositionTimeOffset).cmTime()
+                )
             }
         }
 

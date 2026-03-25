@@ -11,6 +11,10 @@ import CoreImage
 
 public enum FilterProperty: String {
     case radius
+    case componentCount
+    case frameCount
+    case frameSpacing
+    case angle
     case scale
     case rotation
     case translation
@@ -19,7 +23,12 @@ public enum FilterProperty: String {
     case brightness
     case contrast
     case saturation
+    case hue
     case intensity
+    case mix
+    case image1Amount
+    case image2Amount
+    case filterStrength
 }
 
 public protocol Filter {
@@ -52,18 +61,3 @@ public extension Filter {
 public protocol TweenFunctionProvider {
     func tweenValue(input: Double) -> Double
 }
-
-
-//
-//public protocol FilterAnimator {
-//    var type: AnimationValueType { get set }
-//    var startValue: Double? { get set }
-//    var endValue: Double? { get set }
-//    var startPoint: CGPoint? { get set }
-//    var endPoint: CGPoint? { get set }
-//    var startTime: Double { get set }
-//    var endTime: Double { get set }
-//    var animationFunction: AnimationFunctionProvider { get set }
-//    
-//    func animateValue(time: Double) -> Any
-//}

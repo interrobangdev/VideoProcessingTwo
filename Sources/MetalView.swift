@@ -13,10 +13,12 @@ import CoreImage
 public struct MetalView: UIViewRepresentable {
     let ciImage: CIImage?
     let isFrontCamera: Bool
+    let rotateForDeviceOrientation: Bool
 
-    public init(ciImage: CIImage?, isFrontCamera: Bool = false) {
+    public init(ciImage: CIImage?, isFrontCamera: Bool = false, rotateForDeviceOrientation: Bool = true) {
         self.ciImage = ciImage
         self.isFrontCamera = isFrontCamera
+        self.rotateForDeviceOrientation = rotateForDeviceOrientation
     }
 
     public func makeUIView(context: Context) -> MTKView {
@@ -43,6 +45,7 @@ public struct MetalView: UIViewRepresentable {
     public func updateUIView(_ uiView: MTKView, context: Context) {
         context.coordinator.ciImage = ciImage
         context.coordinator.isFrontCamera = isFrontCamera
+        context.coordinator.rotateForDeviceOrientation = rotateForDeviceOrientation
     }
 
     public func makeCoordinator() -> Coordinator {
@@ -53,6 +56,7 @@ public struct MetalView: UIViewRepresentable {
         var ciImage: CIImage?
         var commandQueue: MTLCommandQueue?
         var isFrontCamera: Bool = false
+        var rotateForDeviceOrientation: Bool = true
         private let colorSpace = CGColorSpaceCreateDeviceRGB()
 
         public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
@@ -67,30 +71,37 @@ public struct MetalView: UIViewRepresentable {
                 return
             }
 
+            let drawableRect = CGRect(origin: .zero, size: view.drawableSize)
+
             // Handle portrait orientation rotation
             let deviceOrientation = UIApplication.shared.connectedScenes
                 .compactMap { $0 as? UIWindowScene }
                 .first?
                 .interfaceOrientation ?? .portrait
 
-            if deviceOrientation == .portrait || deviceOrientation == .portraitUpsideDown {
-                ciImage = rotateAndScaleImage(image: ciImage, size: view.drawableSize, rotation: .pi / 2)
+            if rotateForDeviceOrientation && (deviceOrientation == .portrait || deviceOrientation == .portraitUpsideDown) {
+                ciImage = rotateImageAroundCenter(image: ciImage, rotation: .pi / 2)
             }
 
             // Mirror image if using front camera (apply after rotation)
             if isFrontCamera {
-                let mirrorTransform = CGAffineTransform(scaleX: -1, y: 1)
-                    .translatedBy(x: -ciImage.extent.width, y: 0)
+                let extent = ciImage.extent
+                let mirrorTransform = CGAffineTransform(translationX: extent.midX, y: extent.midY)
+                    .scaledBy(x: -1, y: 1)
+                    .translatedBy(x: -extent.midX, y: -extent.midY)
                 ciImage = ciImage.transformed(by: mirrorTransform)
             }
 
-            // Render the CIImage to fill the entire drawable area
-            let drawableRect = CGRect(origin: .zero, size: view.drawableSize)
+            // Always fit + center into drawable space so the preview is centered.
+            let fittedImage = aspectFitCentered(image: ciImage, in: drawableRect)
+            let background = CIImage(color: CIColor.black).cropped(to: drawableRect)
+            let outputImage = fittedImage.composited(over: background).cropped(to: drawableRect)
+
             MetalEnvironment.shared.context.render(
-                ciImage,
+                outputImage,
                 to: currentDrawable.texture,
                 commandBuffer: commandBuffer,
-                bounds: ciImage.extent,
+                bounds: drawableRect,
                 colorSpace: colorSpace
             )
 
@@ -98,42 +109,33 @@ public struct MetalView: UIViewRepresentable {
             commandBuffer.commit()
         }
 
-        private func rotateAndScaleImage(image: CIImage, size: CGSize, rotation: CGFloat) -> CIImage {
-            let originalSize = image.extent.size
+        private func rotateImageAroundCenter(image: CIImage, rotation: CGFloat) -> CIImage {
+            let extent = image.extent
+            let center = CGPoint(x: extent.midX, y: extent.midY)
+            let transform = CGAffineTransform(translationX: center.x, y: center.y)
+                .rotated(by: -rotation)
+                .translatedBy(x: -center.x, y: -center.y)
+            return image.transformed(by: transform)
+        }
 
-            // Translate to origin
-            let originTranslate = CGAffineTransform(translationX: -originalSize.width / 2.0, y: -originalSize.height / 2.0)
-            let centeredImage = image.transformed(by: originTranslate)
+        private func aspectFitCentered(image: CIImage, in targetRect: CGRect) -> CIImage {
+            let sourceRect = image.extent
+            guard
+                sourceRect.width > 0, sourceRect.height > 0,
+                targetRect.width > 0, targetRect.height > 0
+            else { return image }
 
-            // Rotate
-            let rotationTransform = CGAffineTransform(rotationAngle: -rotation)
-            let rotatedImage = centeredImage.transformed(by: rotationTransform)
+            let movedToOrigin = image.transformed(
+                by: CGAffineTransform(translationX: -sourceRect.minX, y: -sourceRect.minY)
+            )
 
-            // Calculate scale to fit in view
-            var scale = CGVector(dx: size.width / originalSize.width, dy: size.height / originalSize.height)
-            if abs(rotation) == CGFloat.pi / 2 {
-                scale = CGVector(dx: size.width / originalSize.height, dy: size.height / originalSize.width)
-            }
+            let scale = min(targetRect.width / sourceRect.width, targetRect.height / sourceRect.height)
+            let scaled = movedToOrigin.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+            let scaledExtent = scaled.extent
 
-            var scl = scale.dx
-            if scale.dx > scale.dy {
-                scl = scale.dy
-            }
-
-            let scaleTransform = CGAffineTransform(scaleX: scl, y: scl)
-            let scaledImage = rotatedImage.transformed(by: scaleTransform)
-
-            // Translate to center
-            let origin = scaledImage.extent.origin
-            let translation = CGAffineTransform(translationX: -origin.x, y: -origin.y)
-            let translated = scaledImage.transformed(by: translation)
-
-            // Composite over black background and crop to drawable size
-            let blackBackground = CIImage(color: CIColor(red: 0, green: 0, blue: 0, alpha: 1))
-                .cropped(to: CGRect(origin: .zero, size: size))
-            let composited = translated.composited(over: blackBackground)
-
-            return composited.cropped(to: CGRect(origin: .zero, size: size))
+            let tx = targetRect.minX + (targetRect.width - scaledExtent.width) * 0.5 - scaledExtent.minX
+            let ty = targetRect.minY + (targetRect.height - scaledExtent.height) * 0.5 - scaledExtent.minY
+            return scaled.transformed(by: CGAffineTransform(translationX: tx, y: ty))
         }
     }
 }

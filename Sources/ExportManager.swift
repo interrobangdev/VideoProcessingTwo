@@ -52,12 +52,33 @@ public class ExportManager {
         }
         scenesToExport.removeFirst()
 
+        print(
+            "[ExportManager] Starting export scene=\(model.scene.id) " +
+            "duration=\(model.scene.duration)s fps=\(model.scene.frameRate) " +
+            "output=\(model.outputURL.path)"
+        )
+
         // Run export on background thread to avoid blocking UI
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            var lastLoggedProgressBucket = -1
             self?.compositor.exportScene(scene: model.scene, outputType: .video, outputURL: model.outputURL) { (image, time) in
                 let progress = time / model.scene.duration
                 model.progress?(model.scene.id, progress)
+
+                let progressBucket = Int((progress * 100.0).rounded(.down) / 10.0)
+                if progressBucket > lastLoggedProgressBucket {
+                    lastLoggedProgressBucket = progressBucket
+                    let percent = min(max(progressBucket * 10, 0), 100)
+                    print("[ExportManager] scene=\(model.scene.id) progress=\(percent)% time=\(time)s")
+                }
             } completion: { [weak self] (success) in
+                let fileExists = FileManager.default.fileExists(atPath: model.outputURL.path)
+                let fileSize = (try? FileManager.default.attributesOfItem(atPath: model.outputURL.path)[.size] as? NSNumber)?.int64Value ?? 0
+                print(
+                    "[ExportManager] Finished export scene=\(model.scene.id) " +
+                    "success=\(success) fileExists=\(fileExists) fileSize=\(fileSize) " +
+                    "output=\(model.outputURL.path)"
+                )
                 model.completion(success)
                 self?.exportNextScene()
             }

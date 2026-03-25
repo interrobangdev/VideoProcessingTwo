@@ -70,8 +70,6 @@ public class VideoSource: Source {
 
         self.reader = MovieReader(url: movieFileURL)
 
-        let success = reader?.setupReader()
-
         if let frame = reader?.getNextPixelBuffer() {
             lastFrame = frameFromVideoReaderFrame(frame: frame)
         }
@@ -98,23 +96,67 @@ public class VideoSource: Source {
         }
 
         // Otherwise use MovieReader (asset reader mode)
-        guard reader != nil else { return nil }
+        guard let reader else { return nil }
 
-        let loopedTime = cmTime.seconds.remainder(dividingBy: reader?.duration ?? 1.0).cmTime()
+        let sourceDuration = max(reader.duration, sourceVideoDuration, 1.0 / 600.0)
+        let frameDuration = 1.0 / max(reader.frameRate, 30.0)
+        let sourceTime = max(0.0, compositionTimeSeconds - compositionStartTime + sourceStartTime)
+        let shouldLoopSource = duration > sourceDuration + frameDuration
+        let targetTimeSeconds: Double
+
+        if shouldLoopSource {
+            targetTimeSeconds = sourceTime.truncatingRemainder(dividingBy: sourceDuration)
+        } else {
+            targetTimeSeconds = min(sourceTime, max(sourceDuration - frameDuration, 0.0))
+        }
+
+        let targetTime = targetTimeSeconds.cmTime()
+
+        if let lf = lastFrame, targetTime < lf.time {
+            setupReader(movieFileURL: url)
+        }
+
         guard let lf = lastFrame,
               let cf = currentFrame else { return nil }
-        if loopedTime >= lf.time && loopedTime < cf.time {
+
+        if targetTime >= lf.time && targetTime < cf.time {
             return lf
-        } else {
-            lastFrame = currentFrame
-            if let frame = reader?.getNextPixelBuffer() {
-                currentFrame = frameFromVideoReaderFrame(frame: frame)
-                return currentFrame
-            } else {
-                setupReader(movieFileURL: url)
-                return lastFrame
-            }
         }
+
+        var previousFrame = lf
+        var nextFrame = cf
+
+        while targetTime >= nextFrame.time {
+            previousFrame = nextFrame
+
+            if let frame = self.reader?.getNextPixelBuffer() {
+                nextFrame = frameFromVideoReaderFrame(frame: frame)
+                continue
+            }
+
+            if shouldLoopSource {
+                setupReader(movieFileURL: url)
+                guard
+                    let resetLastFrame = lastFrame,
+                    let resetCurrentFrame = currentFrame
+                else {
+                    return previousFrame
+                }
+
+                previousFrame = resetLastFrame
+                nextFrame = resetCurrentFrame
+                continue
+            }
+
+            // Near EOF, hold on the final decoded frame instead of restarting the reader.
+            lastFrame = previousFrame
+            currentFrame = previousFrame
+            return previousFrame
+        }
+
+        lastFrame = previousFrame
+        currentFrame = nextFrame
+        return previousFrame
     }
 
     func frameFromVideoReaderFrame(frame: VideoReaderFrame) -> VideoFrame {

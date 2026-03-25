@@ -14,6 +14,7 @@ class GlitchFilter: CIFilter {
 
     var inputImage: CIImage?
     var intensity: Float = 1.0
+    var time: Float = 0.0
 
     private static func createKernel() -> CIKernel? {
         do {
@@ -43,7 +44,7 @@ class GlitchFilter: CIFilter {
     }
 
     override var inputKeys: [String] {
-        return ["inputImage", "intensity"]
+        return ["inputImage", "intensity", "time"]
     }
 
     override var outputKeys: [String] {
@@ -73,11 +74,24 @@ class GlitchFilter: CIFilter {
 
     override var outputImage: CIImage? {
         guard let inputImage = inputImage, let kernel = kernel else {
+            if inputImage == nil {
+            } else {
+            }
             return inputImage
         }
 
-        return kernel.apply(extent: inputImage.extent,
-                           roiCallback: { _, rect in return rect },
-                           arguments: [inputImage, NSNumber(value: intensity)])
+        if let output = kernel.apply(
+            extent: inputImage.extent,
+            roiCallback: { _, rect in return rect },
+            arguments: [
+                inputImage,
+                NSNumber(value: intensity),
+                NSNumber(value: time),
+            ]
+        ) {
+            return output
+        }
+
+        return inputImage
     }
 }

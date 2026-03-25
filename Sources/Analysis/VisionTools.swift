@@ -1,7 +1,8 @@
+import Foundation
 import Vision
 
-class VisionTools {
-    static func performBodyPoseEstimation(on frame: Frame) -> [VNHumanBodyPoseObservation]? {
+public class VisionTools {
+    public static func performBodyPoseEstimation(on frame: Frame) -> [VNHumanBodyPoseObservation]? {
         // Create a request to detect human body pose
         let request = VNDetectHumanBodyPoseRequest()
         
@@ -19,7 +20,7 @@ class VisionTools {
             try handler.perform([request])
             
             // Get the results
-            guard let observations = request.results as? [VNHumanBodyPoseObservation] else {
+            guard let observations = request.results else {
                 print("Failed to get body pose observations")
                 return nil
             }
@@ -29,6 +30,34 @@ class VisionTools {
             print("Error performing body pose estimation: \(error)")
             return nil
         }
+    }
+
+    public static func estimateBodyPoseFrame(
+        on frame: Frame,
+        configuration: BodyPoseEstimationConfiguration = BodyPoseEstimationConfiguration()
+    ) -> BodyPoseFrame? {
+        let estimator = BodyPoseEstimator(configuration: configuration)
+        return try? estimator.estimate(frame: frame)
+    }
+
+    public static func estimateBodyPoseTimeline(
+        videoURL: URL,
+        configuration: BodyPoseVideoAnalysisConfiguration = BodyPoseVideoAnalysisConfiguration()
+    ) -> BodyPoseTimeline? {
+        let analyzer = BodyPoseVideoAnalyzer()
+        return try? analyzer.analyze(videoURL: videoURL, configuration: configuration)
+    }
+
+    public static func makeBodyPoseFilterParameterDriver(
+        videoURL: URL,
+        analysisConfiguration: BodyPoseVideoAnalysisConfiguration = BodyPoseVideoAnalysisConfiguration(),
+        personSelection: BodyPosePersonSelection = .mostConfident
+    ) -> BodyPoseFilterParameterDriver? {
+        let analyzer = BodyPoseVideoAnalyzer()
+        guard let timeline = try? analyzer.analyze(videoURL: videoURL, configuration: analysisConfiguration) else {
+            return nil
+        }
+        return BodyPoseFilterParameterDriver(timeline: timeline, personSelection: personSelection)
     }
     
     func performHandPoseEstimation(on frame: Frame) -> [VNHumanHandPoseObservation]? {
@@ -49,7 +78,7 @@ class VisionTools {
             try handler.perform([request])
             
             // Get the results
-            guard let observations = request.results as? [VNHumanHandPoseObservation] else {
+            guard let observations = request.results else {
                 print("Failed to get hand pose observations")
                 return nil
             }
@@ -74,7 +103,7 @@ class VisionTools {
         do {
             try handler.perform([request])
             
-            guard let observations = request.results as? [VNFaceObservation] else {
+            guard let observations = request.results else {
                 print("Failed to get face observations")
                 return nil
             }
@@ -99,7 +128,7 @@ class VisionTools {
         do {
             try handler.perform([request])
             
-            guard let observations = request.results as? [VNDetectedObjectObservation] else {
+            guard let observations = request.results?.map({ $0 as VNDetectedObjectObservation }) else {
                 print("Failed to get human observations")
                 return nil
             }
@@ -157,7 +186,7 @@ class VisionTools {
         do {
             try handler.perform([request])
             
-            guard let observations = request.results as? [VNSaliencyImageObservation] else {
+            guard let observations = request.results else {
                 print("Failed to get object salience observations")
                 return nil
             }
@@ -182,7 +211,7 @@ class VisionTools {
         do {
             try handler.perform([request])
             
-            guard let observations = request.results as? [VNSaliencyImageObservation] else {
+            guard let observations = request.results else {
                 print("Failed to get attention saliency observations")
                 return nil
             }

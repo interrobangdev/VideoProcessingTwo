@@ -177,7 +177,19 @@ public class MovieWriter: NSObject {
             self?.assetWriterVideoInput?.markAsFinished()
             
             self?.assetWriter?.finishWriting {
-                completion(true)
+                guard let writer = self?.assetWriter else {
+                    completion(false)
+                    return
+                }
+
+                let success = writer.status == .completed
+                if !success {
+                    print("Asset writer failed to finish. Status: \(writer.status)")
+                    if let error = writer.error {
+                        print("Asset writer finish error: \(error)")
+                    }
+                }
+                completion(success)
             }
         }
     }

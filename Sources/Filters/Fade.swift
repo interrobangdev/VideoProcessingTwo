@@ -12,6 +12,7 @@ import CoreImage.CIFilterBuiltins
 public class Fade: Filter {
     public var filterAnimators: [FilterAnimator]
     public var fade: Double
+    private let colorMatrix = CIFilter.colorMatrix()
     
     public init(fade: Double, filterAnimators: [FilterAnimator]) {
         self.filterAnimators = filterAnimators
@@ -27,12 +28,8 @@ public class Fade: Filter {
     }
     
     public func filterContent(image: CIImage, sourceTime: CMTime?, sceneTime: CMTime?, compositionTime: CMTime?) -> CIImage? {
-        
-        let colorMatrix = CIFilter.colorMatrix()
         colorMatrix.aVector = CIVector(x: 0, y: 0, z: 0, w: CGFloat(fade))
         colorMatrix.inputImage = image
-        
         return colorMatrix.outputImage
     }
 }
-

@@ -22,9 +22,9 @@ public class GlitchEffect: Filter {
     }
     
     private func updateFilters() {
-        colorControls.saturation = Float(1.5 + intensity * 0.5)
-        colorControls.contrast = Float(1.0 + intensity * 0.2)
-        pixellate.scale = Float(5 + intensity * 10)
+        colorControls.saturation = Float(1.2 + intensity * 0.9)
+        colorControls.contrast = Float(1.0 + intensity * 0.45)
+        pixellate.scale = Float(2.0 + intensity * 12.0)
         glitchFilter.intensity = Float(intensity)
     }
     
@@ -40,6 +40,9 @@ public class GlitchEffect: Filter {
     }
     
     public func filterContent(image: CIImage, sourceTime: CMTime?, sceneTime: CMTime?, compositionTime: CMTime?) -> CIImage? {
+        let resolvedTime = compositionTime ?? sceneTime ?? sourceTime ?? .zero
+        let seconds = CMTimeGetSeconds(resolvedTime)
+        glitchFilter.time = Float(seconds.isFinite ? seconds : 0.0)
         colorControls.inputImage = image
         pixellate.inputImage = colorControls.outputImage
         glitchFilter.inputImage = pixellate.outputImage

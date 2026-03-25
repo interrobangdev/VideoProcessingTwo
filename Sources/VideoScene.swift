@@ -39,6 +39,7 @@ public class VideoScene {
 
     public var asset: AVURLAsset?
     public var size: CGSize
+    public var bodyPoseParameterDriver: BodyPoseFilterParameterDriver?
 
     public enum AssetType: String {
         case image
@@ -53,6 +54,7 @@ public class VideoScene {
         self.group = LayerGroup(groups: [], layers: [], filters: [], mask: nil)
         self.transition = transition ?? Transition(type: .none, duration: 0.0)
         self.size = size
+        self.bodyPoseParameterDriver = nil
     }
 
     public func makeSceneFilename() -> String {
@@ -68,7 +70,13 @@ public class VideoScene {
     
     public func renderScene(frameTime: Double, compositionTimeOffset: Double, framesByTrackID: [CMPersistentTrackID: CVPixelBuffer]? = nil) -> CIImage? {
         let inputImage = CIImage.black.cropped(to: CGRect(origin: .zero, size: size))
-        return group.renderGroup(frameTime: frameTime, compositionTimeOffset: compositionTimeOffset, inputImage: inputImage, framesByTrackID: framesByTrackID)
+        return group.renderGroup(
+            frameTime: frameTime,
+            compositionTimeOffset: compositionTimeOffset,
+            inputImage: inputImage,
+            framesByTrackID: framesByTrackID,
+            bodyPoseParameterDriver: bodyPoseParameterDriver
+        )
     }
     
     public func getGroup(layerIndex: LayerObjectIndex, create: Bool) -> LayerGroup? {
@@ -130,7 +138,15 @@ public class VideoScene {
                       source = ImageSource(image: cgImage)
                   }
         } else if type == .video {
-            source = VideoSource(movieFileUrl: assetURL)
+            let videoSource = VideoSource(movieFileUrl: assetURL)
+            if let reader = videoSource.reader {
+                videoSource.duration = reader.duration > 0 ? reader.duration : duration
+                videoSource.sourceVideoDuration = reader.duration
+                videoSource.naturalSize = reader.size
+            } else {
+                videoSource.duration = duration
+            }
+            source = videoSource
         } 
         
         if let source = source {
